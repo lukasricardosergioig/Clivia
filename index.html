@@ -64,17 +64,17 @@ nav {
 /* STATS */
 .stats {
   padding:100px 60px;
-  background:var(--blue-dark);
-  color:var(--white);
+  background:var(--cream);
+  color:var(--text);
 }
-.stats-headline { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,60px); font-weight:400; line-height:1.1; margin-bottom:16px; }
-.stats-headline .accent { color:var(--blue-light); font-style:italic; }
-.stats-sub { font-size:17px; line-height:1.6; color:rgba(255,255,255,0.6); max-width:540px; margin-bottom:64px; }
-.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.1); border-radius:16px; overflow:hidden; }
-.stat-item { padding:48px 40px; background:var(--blue-dark); }
+.stats-headline { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,60px); font-weight:400; line-height:1.1; margin-bottom:16px; color:var(--text); }
+.stats-headline .accent { color:var(--blue-dark); font-style:italic; }
+.stats-sub { font-size:17px; line-height:1.6; color:var(--text-muted); max-width:540px; margin-bottom:64px; }
+.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+.stat-item { padding:48px 40px; background:var(--cream); }
 .stat-num { font-family:'DM Serif Display',serif; font-size:72px; font-weight:400; color:var(--blue-light); line-height:1; margin-bottom:16px; }
 .stat-num sup { font-size:32px; vertical-align:super; }
-.stat-label { font-size:15px; line-height:1.6; color:rgba(255,255,255,0.65); }
+.stat-label { font-size:15px; line-height:1.6; color:var(--text-muted); }
 
 /* PILARES */
 .pilares { padding:100px 60px; background:var(--cream); }
@@ -160,22 +160,22 @@ input[type=range]::-webkit-slider-runnable-track { border-radius:2px; }
 .faq-item.open .faq-icon { background:var(--blue-dark); border-color:var(--blue-dark); color:var(--white); transform:rotate(45deg); }
 
 /* CTA FINAL */
-.cta-final { padding:100px 60px; background:var(--blue-dark); text-align:center; }
-.cta-final h2 { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,64px); font-weight:400; color:var(--white); line-height:1.1; margin-bottom:16px; }
-.cta-final h2 .accent { color:var(--blue-light); font-style:italic; }
-.cta-final p { font-size:17px; color:rgba(255,255,255,0.55); margin-bottom:44px; max-width:440px; margin-left:auto; margin-right:auto; }
+.cta-final { padding:100px 60px; background:var(--cream); text-align:center; }
+.cta-final h2 { font-family:'DM Serif Display',serif; font-size:clamp(36px,5vw,64px); font-weight:400; color:var(--text); line-height:1.1; margin-bottom:16px; }
+.cta-final h2 .accent { color:var(--blue-accent); font-style:italic; }
+.cta-final p { font-size:17px; color:var(--text-muted); margin-bottom:44px; max-width:440px; margin-left:auto; margin-right:auto; }
 .cta-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
-.btn-white { padding:18px 40px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:500; color:var(--blue-dark); background:var(--white); border:none; cursor:pointer; text-decoration:none; transition:all 0.2s; }
+.btn-white { padding:18px 40px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:500; color:var(--white); background:var(--blue-dark); border:none; cursor:pointer; text-decoration:none; transition:all 0.2s; }
 .btn-white:hover { transform:translateY(-2px); }
-.btn-outline { padding:18px 40px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:400; color:var(--white); border:1.5px solid rgba(255,255,255,0.25); background:transparent; cursor:pointer; text-decoration:none; transition:all 0.2s; }
-.btn-outline:hover { border-color:rgba(255,255,255,0.6); }
+.btn-outline { padding:18px 40px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:400; color:var(--blue-dark); border:1.5px solid var(--border); background:transparent; cursor:pointer; text-decoration:none; transition:all 0.2s; }
+.btn-outline:hover { border-color:var(--blue-accent); }
 
 /* FOOTER */
 footer { padding:36px 60px; background:var(--text); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
 footer p { font-size:13px; color:rgba(255,255,255,0.35); }
 
 /* PRICING */
-.pricing { padding:100px 60px; background:var(--cream-dark); text-align:center; }
+.pricing { padding:100px 60px; background:var(--cream); text-align:center; }
 .price-card { max-width:480px; margin:60px auto 0; padding:52px; border-radius:24px; background:var(--white); border:1px solid var(--border); box-shadow:0 20px 60px rgba(26,53,40,0.08); }
 .price-eyebrow { font-size:12px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--blue-accent); margin-bottom:16px; }
 .price-val { font-family:'DM Serif Display',serif; font-size:72px; font-weight:400; color:var(--text); line-height:1; margin:12px 0 4px; }
@@ -266,7 +266,7 @@ footer p { font-size:13px; color:rgba(255,255,255,0.35); }
 
 <!-- STATS -->
 <section class="stats">
-  <p class="section-eyebrow" style="color:var(--blue-light)">O problema real</p>
+  <p class="section-eyebrow">O problema real</p>
   <h2 class="stats-headline reveal">A maior dor não é<br>técnica. <span class="accent">É gestão.</span></h2>
   <p class="stats-sub">Conversamos com centenas de profissionais de estética no Brasil. O resultado mostrou onde o dinheiro está vazando, em silêncio, todos os meses.</p>
   <div class="stats-grid">

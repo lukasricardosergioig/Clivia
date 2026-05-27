@@ -524,6 +524,31 @@ function updateSliderFill(slider) {
   slider.style.background = 'linear-gradient(to right, var(--blue-light) 0%, var(--blue-light) ' + pct + '%, rgba(255,255,255,0.15) ' + pct + '%, rgba(255,255,255,0.15) 100%)';
 }
 
+var animTimers = {};
+
+function animateValue(elId, newVal, prefix, duration) {
+  if (animTimers[elId]) cancelAnimationFrame(animTimers[elId]);
+  var el = document.getElementById(elId);
+  var current = parseFloat((el.dataset.current || '0').replace(/[^0-9]/g, '')) || 0;
+  var start = null;
+  var from = current;
+  function step(ts) {
+    if (!start) start = ts;
+    var progress = Math.min((ts - start) / duration, 1);
+    var eased = 1 - Math.pow(1 - progress, 2);
+    var val = Math.round(from + (newVal - from) * eased);
+    el.textContent = prefix + val.toLocaleString('pt-BR');
+    el.dataset.current = val;
+    if (progress < 1) {
+      animTimers[elId] = requestAnimationFrame(step);
+    } else {
+      el.textContent = prefix + newVal.toLocaleString('pt-BR');
+      el.dataset.current = newVal;
+    }
+  }
+  animTimers[elId] = requestAnimationFrame(step);
+}
+
 function calcular() {
   var p = parseInt(document.getElementById('sl-pacientes').value);
   var r = parseInt(document.getElementById('sl-retencao').value) / 100;
@@ -535,10 +560,10 @@ function calcular() {
   var novo = Math.round(p * Math.min(r * 1.15, 0.98) * t);
   var gMes = novo - atual;
   var gAno = gMes * 12;
-  document.getElementById('fat-atual').textContent = 'R$ ' + atual.toLocaleString('pt-BR');
-  document.getElementById('fat-clivia').textContent = 'R$ ' + novo.toLocaleString('pt-BR');
-  document.getElementById('ganho-mes').textContent = 'R$ ' + gMes.toLocaleString('pt-BR');
-  document.getElementById('ganho-ano').textContent = 'R$ ' + gAno.toLocaleString('pt-BR');
+  animateValue('fat-atual', atual, 'R$ ', 600);
+  animateValue('fat-clivia', novo, 'R$ ', 600);
+  animateValue('ganho-mes', gMes, 'R$ ', 800);
+  animateValue('ganho-ano', gAno, 'R$ ', 800);
   ['sl-pacientes','sl-retencao','sl-ticket'].forEach(function(id) {
     updateSliderFill(document.getElementById(id));
   });

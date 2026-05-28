@@ -88,69 +88,116 @@ tr:hover td { background:var(--cream); }
 </aside>
 <div class="main">
   <header class="topbar">
-    <div><h1>Retornos pós-procedimento</h1><p>Acompanhamento de protocolos de retorno</p></div>
+    <div><h1>Retornos pós-procedimento</h1><p>Criados automaticamente ao registrar evoluções</p></div>
     <div class="topbar-right"></div>
   </header>
   <div class="content">
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Atrasados</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--danger);">1</div></div></div>
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Hoje</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--warning);">1</div></div></div>
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Próximos 7 dias</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--success);">1</div></div></div>
-</div>
-<div class="card" style="margin-bottom:16px;">
-  <div class="card-header"><span class="card-title">Configuração de retornos por procedimento</span><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Novo protocolo</button></div>
-  <div style="padding:0;">
-    <table>
-      <thead><tr><th>Procedimento</th><th>Retorno em</th><th>Ativo</th></tr></thead>
-      <tbody>
-        <tr><td>Botox</td><td>15 dias</td><td><span class="badge badge-success">Sim</span></td></tr>
-        <tr><td>Preenchimento</td><td>30 dias</td><td><span class="badge badge-success">Sim</span></td></tr>
-        <tr><td>Laser CO2</td><td>21 dias</td><td><span class="badge badge-success">Sim</span></td></tr>
-        <tr><td>Fio de PDO</td><td>45 dias</td><td><span class="badge badge-success">Sim</span></td></tr>
-        <tr><td>Peeling</td><td>14 dias</td><td><span class="badge badge-success">Sim</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+<div id="metrics" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;"></div>
 <div class="card">
-  <div class="card-header"><span class="card-title">Retornos pendentes</span></div>
-  <div style="padding:0;">
-    <table>
-      <thead><tr><th>Paciente</th><th>Procedimento</th><th>Data do procedimento</th><th>Retorno previsto</th><th>Urgência</th><th>Ação</th></tr></thead>
-      <tbody>
-        <tr>
-          <td><div style="font-weight:500;">Maria Costa</div></td>
-          <td>Botox facial</td><td>09/05/2026</td><td>24/05/2026</td>
-          <td><span class="badge badge-danger">Atrasado 3 dias</span></td>
-          <td><button class="btn btn-outline" style="padding:5px 12px;font-size:11px;" onclick="marcarRetorno(this)">Marcar agendado</button></td>
-        </tr>
-        <tr>
-          <td><div style="font-weight:500;">Lara Ferreira</div></td>
-          <td>Preenchimento labial</td><td>27/04/2026</td><td>27/05/2026</td>
-          <td><span class="badge badge-warning">Hoje</span></td>
-          <td><button class="btn btn-outline" style="padding:5px 12px;font-size:11px;" onclick="marcarRetorno(this)">Marcar agendado</button></td>
-        </tr>
-        <tr>
-          <td><div style="font-weight:500;">Kátia Souza</div></td>
-          <td>Laser CO2</td><td>06/05/2026</td><td>30/05/2026</td>
-          <td><span class="badge badge-success">Em 3 dias</span></td>
-          <td><button class="btn btn-outline" style="padding:5px 12px;font-size:11px;" onclick="marcarRetorno(this)">Marcar agendado</button></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <div class="card-header"><span class="card-title">Retornos pendentes</span><span id="count" style="font-size:13px;color:var(--text-muted);"></span></div>
+  <div id="table-body"></div>
 </div>
-<script>
-function marcarRetorno(btn){
-  btn.textContent='✓ Agendado';
-  btn.style.background='rgba(45,106,79,0.1)';
-  btn.style.color='var(--success)';
-  btn.style.borderColor='rgba(45,106,79,0.2)';
-  btn.disabled=true;
-  btn.closest('tr').style.opacity='0.5';
+</div>
+</div>
+<style>
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:32px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:modalIn 0.2s ease; }
+.modal.modal-lg { max-width:600px; }
+@keyframes modalIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; margin-bottom:6px; }
+.modal p { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:12px; font-weight:500; margin-bottom:5px; color:var(--text); }
+.form-control { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; background:#fff; transition:border-color 0.2s; }
+.form-control:focus { border-color:var(--copper); box-shadow:0 0 0 3px rgba(122,102,85,0.1); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:10px; margin-top:24px; }
+.modal-actions .btn { flex:1; padding:11px; justify-content:center; }
+.empty-state { padding:56px 22px; text-align:center; }
+.empty-icon { width:56px; height:56px; background:var(--copper-pale); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.empty-title { font-size:15px; font-weight:500; margin-bottom:6px; }
+.empty-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-dialog { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center; }
+.confirm-dialog.open { display:flex; }
+.confirm-box { background:#fff; border-radius:16px; padding:28px; max-width:360px; width:90%; text-align:center; }
+.confirm-box h3 { font-size:17px; font-weight:600; margin-bottom:8px; }
+.confirm-box p { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-btns { display:flex; gap:10px; }
+.confirm-btns .btn { flex:1; }
+</style><script>
+// ── SHARED DATA LAYER ──
+const DB = {
+  get: k => JSON.parse(localStorage.getItem('clivia_'+k)||'[]'),
+  set: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  getObj: (k,d={}) => JSON.parse(localStorage.getItem('clivia_'+k)||JSON.stringify(d)),
+  setObj: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  nextId: k => { const d=DB.get(k); return d.length ? Math.max(...d.map(x=>x.id||0))+1 : 1; }
+};
+
+// Modal helpers
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openConfirm(msg, onYes){
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-yes').onclick = function(){ closeConfirm(); onYes(); };
 }
+function closeConfirm(){ document.getElementById('confirm-dialog').classList.remove('open'); }
+
+// Toast notification
+function toast(msg, type='success'){
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;background:'+(type==='success'?'#2D6A4F':type==='error'?'#C0392B':'#2E2218')+';box-shadow:0 4px 20px rgba(0,0,0,0.15);animation:fadeUp 0.3s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+function render(){
+  const retornos=DB.get('retornos').filter(r=>r.status==='Pendente');
+  const hoje=new Date();
+  const hojeStr=hoje.toISOString().split('T')[0];
+  retornos.forEach(r=>{
+    const dt=new Date(r.dataRetorno+'T12:00:00');
+    const diff=Math.floor((dt-hoje)/86400000);
+    r._diff=diff;
+  });
+  retornos.sort((a,b)=>a._diff-b._diff);
+
+  const atrasados=retornos.filter(r=>r._diff<0).length;
+  const hoje_=retornos.filter(r=>r._diff===0).length;
+  const proximos=retornos.filter(r=>r._diff>0&&r._diff<=7).length;
+
+  document.getElementById('metrics').innerHTML=`
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Atrasados</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:${atrasados>0?'var(--danger)':'var(--success)'};">${atrasados}</div></div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Hoje</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:${hoje_>0?'var(--warning)':'var(--text)'};">${hoje_}</div></div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Próximos 7 dias</div><div style="font-family:'DM Serif Display',serif;font-size:28px;">${proximos}</div></div>
+  `;
+
+  document.getElementById('count').textContent=retornos.length+' pendente'+(retornos.length!==1?'s':'');
+  const body=document.getElementById('table-body');
+  if(!retornos.length){body.innerHTML='<div class="empty-state"><div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div><div class="empty-title">Nenhum retorno pendente</div><div class="empty-desc">Os retornos são criados automaticamente quando você registra uma evolução com dias de retorno.</div></div>';return;}
+
+  body.innerHTML='<table><thead><tr><th>Paciente</th><th>Procedimento</th><th>Data do proc.</th><th>Retorno previsto</th><th>Urgência</th><th>Ação</th></tr></thead><tbody>'+retornos.map(r=>{
+    let badge,texto;
+    if(r._diff<0){badge='badge-danger';texto='Atrasado '+Math.abs(r._diff)+' dia'+(Math.abs(r._diff)!==1?'s':'');}
+    else if(r._diff===0){badge='badge-warning';texto='Hoje';}
+    else{badge='badge-success';texto='Em '+r._diff+' dia'+(r._diff!==1?'s':'');}
+    const dtProc=new Date(r.dataProc+'T12:00:00').toLocaleDateString('pt-BR');
+    const dtRet=new Date(r.dataRetorno+'T12:00:00').toLocaleDateString('pt-BR');
+    return `<tr><td style="font-weight:500;">${r.pacienteNome}</td><td>${r.proc}</td><td>${dtProc}</td><td>${dtRet}</td><td><span class="badge ${badge}">${texto}</span></td><td><button class="btn btn-outline" style="padding:5px 12px;font-size:11px;" onclick="marcarAgendado(this,${r.id})">Marcar agendado</button></td></tr>`;
+  }).join('')+'</tbody></table>';
+}
+
+function marcarAgendado(btn,id){
+  const rs=DB.get('retornos');
+  const idx=rs.findIndex(r=>r.id===id);
+  if(idx>-1){rs[idx].status='Agendado';DB.set('retornos',rs);}
+  btn.textContent='✓ Agendado';btn.style.background='rgba(45,106,79,0.1)';btn.style.color='var(--success)';btn.style.borderColor='rgba(45,106,79,0.2)';btn.disabled=true;btn.closest('tr').style.opacity='0.5';
+}
+render();
 </script>
-</div>
-</div>
 </body>
 </html>

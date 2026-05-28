@@ -419,8 +419,8 @@ function handleLogin(e){
     var btn = document.getElementById('submit-btn');
     btn.textContent = 'Entrando...';
     btn.disabled = true;
-    // Aqui vai a integração com Supabase
-    setTimeout(function(){ btn.textContent = 'Entrar'; btn.disabled = false; }, 2000);
+    // Temporário - redireciona para dashboard
+    setTimeout(function(){ window.location.href = 'clivia-dashboard.html'; }, 1000);
   }
 }
 

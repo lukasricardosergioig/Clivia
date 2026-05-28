@@ -583,8 +583,8 @@ function handleRegister(e){
     var btn = document.getElementById('submit-btn');
     btn.textContent = 'Processando...';
     btn.disabled = true;
-    // Integração com Supabase + Stripe aqui
-    setTimeout(function(){ btn.textContent='Pagar R$97,90 →'; btn.disabled=false; }, 2000);
+    // Temporário - redireciona para dashboard
+    setTimeout(function(){ window.location.href = 'clivia-dashboard.html'; }, 1000);
   }
 }
 </script>

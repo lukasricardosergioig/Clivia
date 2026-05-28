@@ -88,44 +88,115 @@ tr:hover td { background:var(--cream); }
 </aside>
 <div class="main">
   <header class="topbar">
-    <div><h1>Comissões</h1><p>Controle de comissões por profissional</p></div>
-    <div class="topbar-right"><button class="btn btn-primary">+ Registrar pagamento</button></div>
+    <div><h1>Comissões</h1><p>Calculadas automaticamente dos agendamentos concluídos</p></div>
+    <div class="topbar-right"></div>
   </header>
   <div class="content">
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Total a pagar — Maio</div><div style="font-family:'DM Serif Display',serif;font-size:28px;">R$1.263</div></div></div>
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Já pago — Maio</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--success);">R$840</div></div></div>
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Pendente</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--warning);">R$423</div></div></div>
+<div id="metrics" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;"></div>
+<div style="display:flex;gap:10px;margin-bottom:16px;">
+  <input class="form-control" id="filtro-mes" type="month" style="max-width:180px;" onchange="render()">
+  <div style="flex:1;"></div>
 </div>
 <div class="card">
-  <div class="card-header"><span class="card-title">Comissões por profissional — Maio 2026</span></div>
-  <div style="padding:0;">
-    <table>
-      <thead><tr><th>Profissional</th><th>Procedimentos</th><th>Faturado</th><th>% Comissão</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead>
-      <tbody>
-        <tr><td><div style="font-weight:500;">Dra. Ana Silva</div><div style="font-size:11px;color:var(--text-muted);">Médica esteta</div></td><td>18</td><td>R$5.420</td><td>15%</td><td style="font-weight:600;">R$813</td><td><span class="badge badge-success">Pago</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Detalhes</button></td></tr>
-        <tr><td><div style="font-weight:500;">Camila Rocha</div><div style="font-size:11px;color:var(--text-muted);">Esteticista</div></td><td>12</td><td>R$1.680</td><td>20%</td><td style="font-weight:600;">R$336</td><td><span class="badge badge-warning">Pendente</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Detalhes</button></td></tr>
-        <tr><td><div style="font-weight:500;">Larissa Mota</div><div style="font-size:11px;color:var(--text-muted);">Enfermeira</div></td><td>8</td><td>R$1.140</td><td>10%</td><td style="font-weight:600;">R$114</td><td><span class="badge badge-warning">Pendente</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Detalhes</button></td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-<div class="card">
-  <div class="card-header"><span class="card-title">Detalhamento por procedimento</span></div>
-  <div style="padding:0;">
-    <table>
-      <thead><tr><th>Data</th><th>Procedimento</th><th>Paciente</th><th>Profissional</th><th>Valor proc.</th><th>Comissão</th></tr></thead>
-      <tbody>
-        <tr><td>27/05</td><td>Botox facial</td><td>Maria Santos</td><td>Dra. Ana Silva</td><td>R$450</td><td>R$67,50</td></tr>
-        <tr><td>27/05</td><td>Preenchimento</td><td>Ana Costa</td><td>Dra. Ana Silva</td><td>R$680</td><td>R$102,00</td></tr>
-        <tr><td>26/05</td><td>Limpeza de pele</td><td>Juliana Lima</td><td>Camila Rocha</td><td>R$280</td><td>R$56,00</td></tr>
-        <tr><td>25/05</td><td>Laser CO2</td><td>Fernanda Reis</td><td>Dra. Ana Silva</td><td>R$890</td><td>R$133,50</td></tr>
-        <tr><td>24/05</td><td>Aplicação vitamina C</td><td>Carla Mendes</td><td>Larissa Mota</td><td>R$320</td><td>R$32,00</td></tr>
-      </tbody>
-    </table>
-  </div>
+  <div class="card-header"><span class="card-title">Comissões por profissional</span></div>
+  <div id="table-body"></div>
 </div>
 </div>
 </div>
+<style>
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:32px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:modalIn 0.2s ease; }
+.modal.modal-lg { max-width:600px; }
+@keyframes modalIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; margin-bottom:6px; }
+.modal p { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:12px; font-weight:500; margin-bottom:5px; color:var(--text); }
+.form-control { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; background:#fff; transition:border-color 0.2s; }
+.form-control:focus { border-color:var(--copper); box-shadow:0 0 0 3px rgba(122,102,85,0.1); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:10px; margin-top:24px; }
+.modal-actions .btn { flex:1; padding:11px; justify-content:center; }
+.empty-state { padding:56px 22px; text-align:center; }
+.empty-icon { width:56px; height:56px; background:var(--copper-pale); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.empty-title { font-size:15px; font-weight:500; margin-bottom:6px; }
+.empty-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-dialog { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center; }
+.confirm-dialog.open { display:flex; }
+.confirm-box { background:#fff; border-radius:16px; padding:28px; max-width:360px; width:90%; text-align:center; }
+.confirm-box h3 { font-size:17px; font-weight:600; margin-bottom:8px; }
+.confirm-box p { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-btns { display:flex; gap:10px; }
+.confirm-btns .btn { flex:1; }
+</style><script>
+// ── SHARED DATA LAYER ──
+const DB = {
+  get: k => JSON.parse(localStorage.getItem('clivia_'+k)||'[]'),
+  set: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  getObj: (k,d={}) => JSON.parse(localStorage.getItem('clivia_'+k)||JSON.stringify(d)),
+  setObj: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  nextId: k => { const d=DB.get(k); return d.length ? Math.max(...d.map(x=>x.id||0))+1 : 1; }
+};
+
+// Modal helpers
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openConfirm(msg, onYes){
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-yes').onclick = function(){ closeConfirm(); onYes(); };
+}
+function closeConfirm(){ document.getElementById('confirm-dialog').classList.remove('open'); }
+
+// Toast notification
+function toast(msg, type='success'){
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;background:'+(type==='success'?'#2D6A4F':type==='error'?'#C0392B':'#2E2218')+';box-shadow:0 4px 20px rgba(0,0,0,0.15);animation:fadeUp 0.3s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+function render(){
+  const mes=document.getElementById('filtro-mes').value;
+  const profs=DB.get('profissionais');
+  const ags=DB.get('agendamentos').filter(a=>a.status==='Concluído'&&(!mes||a.data.startsWith(mes)));
+
+  let totalPagar=0, totalPago=0;
+  const rows = profs.map(prof=>{
+    const profAgs=ags.filter(a=>a.prof===prof.nome&&a.valor);
+    const fat=profAgs.reduce((s,a)=>s+parseFloat(a.valor||0),0);
+    const com=(fat*(parseFloat(prof.com||0)/100));
+    totalPagar+=com;
+    return {prof,fat,com,qtd:profAgs.length};
+  }).filter(r=>r.qtd>0||true);
+
+  document.getElementById('metrics').innerHTML=`
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Total a pagar</div><div style="font-family:'DM Serif Display',serif;font-size:28px;">R$${totalPagar.toFixed(2).replace('.',',')}</div></div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Profissionais</div><div style="font-family:'DM Serif Display',serif;font-size:28px;">${profs.length}</div></div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Atendimentos concluídos</div><div style="font-family:'DM Serif Display',serif;font-size:28px;">${ags.length}</div></div>
+  `;
+
+  const body=document.getElementById('table-body');
+  if(!profs.length){body.innerHTML='<div class="empty-state"><div class="empty-title">Nenhum profissional cadastrado</div><div class="empty-desc">Cadastre profissionais em <a href="clivia-configuracoes.html" style="color:var(--copper);">Configurações</a>.</div></div>';return;}
+  if(!ags.length){body.innerHTML='<div class="empty-state"><div class="empty-title">Nenhum atendimento concluído</div><div class="empty-desc">As comissões são calculadas automaticamente com base nos agendamentos com status "Concluído".</div></div>';return;}
+
+  body.innerHTML='<table><thead><tr><th>Profissional</th><th>Função</th><th>Atendimentos</th><th>Faturado</th><th>% Comissão</th><th>Comissão</th></tr></thead><tbody>'+rows.map(r=>`
+    <tr>
+      <td style="font-weight:500;">${r.prof.nome}</td>
+      <td>${r.prof.funcao||'—'}</td>
+      <td>${r.qtd}</td>
+      <td>R$${r.fat.toFixed(2).replace('.',',')}</td>
+      <td>${r.prof.com||0}%</td>
+      <td style="font-weight:600;">R$${r.com.toFixed(2).replace('.',',')}</td>
+    </tr>
+  `).join('')+'</tbody></table>';
+}
+
+document.getElementById('filtro-mes').value=new Date().toISOString().slice(0,7);
+render();
+</script>
 </body>
 </html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clivia — Assinar</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --cream: #F5F2EE;
+  --copper-dark: #2E2218;
+  --copper-mid: #5C3520;
+  --copper: #7A6655;
+  --copper-light: #B8A898;
+  --white: #FFFFFF;
+  --text: #2E2218;
+  --text-muted: #7A6655;
+  --border: rgba(122,102,85,0.2);
+  --error: #C0392B;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* LEFT PANEL */
+.left-panel {
+  width: 42%;
+  background: var(--copper-dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.left-panel canvas {
+  position: absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  pointer-events:none;
+}
+
+.left-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.left-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 60px;
+}
+
+.left-logo svg { width: 40px; height: 40px; }
+
+.left-logo-name {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: var(--white);
+}
+
+.left-price-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--copper-light);
+  margin-bottom: 12px;
+}
+
+.left-price {
+  font-family: 'DM Serif Display', serif;
+  font-size: 72px;
+  font-weight: 400;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.left-price-period {
+  font-size: 15px;
+  color: var(--copper-light);
+  margin-bottom: 48px;
+}
+
+.left-features {
+  list-style: none;
+  text-align: left;
+  display: inline-block;
+}
+
+.left-features li {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.left-features li:last-child { border-bottom: none; }
+
+.left-features li::before {
+  content: '';
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--copper);
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='white' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 10px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+
+/* RIGHT PANEL */
+.right-panel {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 40px;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 480px;
+}
+
+.form-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--copper-dark);
+  margin-bottom: 6px;
+}
+
+.form-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+.form-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--copper-light);
+  margin-bottom: 14px;
+  margin-top: 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.form-label .optional {
+  font-weight: 400;
+  color: var(--copper-light);
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+.form-input, .form-select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: all 0.2s;
+  -webkit-appearance: none;
+}
+
+.form-input:focus, .form-select:focus {
+  border-color: var(--copper);
+  box-shadow: 0 0 0 3px rgba(122,102,85,0.1);
+}
+
+.form-input::placeholder { color: var(--copper-light); }
+.form-input.error { border-color: var(--error); }
+
+.form-error {
+  font-size: 11px;
+  color: var(--error);
+  margin-top: 4px;
+  display: none;
+}
+
+.input-wrapper { position: relative; }
+
+.toggle-pwd {
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  cursor: pointer;
+  color: var(--copper-light);
+  font-size: 15px;
+  padding: 0;
+  transition: color 0.2s;
+}
+.toggle-pwd:hover { color: var(--copper); }
+
+.doc-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 10px;
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A6655' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+/* Cupom */
+.cupom-wrapper {
+  position: relative;
+}
+.cupom-btn {
+  position: absolute;
+  right: 6px; top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--copper-dark);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+}
+.cupom-btn:hover { background: var(--copper-mid); }
+
+/* Termos */
+.terms-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 20px 0 24px;
+}
+
+.terms-wrapper input[type="checkbox"] {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  accent-color: var(--copper-dark);
+  flex-shrink: 0;
+  margin-top: 1px;
+  cursor: pointer;
+}
+
+.terms-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.terms-text a {
+  color: var(--copper-dark);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.terms-text a:hover { text-decoration: underline; }
+
+/* Submit */
+.btn-submit {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  border: none;
+  background: var(--copper-dark);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.btn-submit:hover {
+  background: var(--copper-mid);
+  transform: translateY(-1px);
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.login-link a {
+  color: var(--copper-dark);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.login-link a:hover { text-decoration: underline; }
+
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+@media (max-width: 768px) {
+  body { flex-direction: column; }
+  .left-panel { width: 100%; min-height: auto; padding: 40px 24px; }
+  .left-price { font-size: 52px; }
+  .left-features { display: none; }
+  .right-panel { padding: 32px 20px; }
+  .form-row { grid-template-columns: 1fr; }
+  .doc-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LEFT -->
+<div class="left-panel">
+  <canvas id="lc"></canvas>
+  <div class="left-content">
+    <div class="left-logo">
+      <svg viewBox="0 0 40 40" fill="none">
+        <g transform="translate(20,20)">
+          <rect x="-5" y="-13" width="10" height="14" rx="5" fill="rgba(255,255,255,0.7)" transform="rotate(0)"/>
+          <rect x="-5" y="-13" width="10" height="14" rx="5" fill="rgba(255,255,255,0.7)" transform="rotate(60)"/>
+          <rect x="-5" y="-13" width="10" height="14" rx="5" fill="rgba(255,255,255,0.7)" transform="rotate(120)"/>
+          <rect x="-5" y="-13" width="10" height="14" rx="5" fill="rgba(255,255,255,0.7)" transform="rotate(180)"/>
+          <rect x="-5" y="-13" width="10" height="14" rx="5" fill="rgba(255,255,255,0.7)" transform="rotate(240)"/>
+          <rect x="-5" y="-13" width="10" height="14" rx="5" fill="rgba(255,255,255,0.7)" transform="rotate(300)"/>
+        </g>
+      </svg>
+      <span class="left-logo-name">CLIVIA</span>
+    </div>
+
+    <p class="left-price-label">Plano completo</p>
+    <div class="left-price">R$97<span style="font-size:36px">,90</span></div>
+    <p class="left-price-period">por mês · cancele quando quiser</p>
+
+    <ul class="left-features">
+      <li>Agendamento e calendário</li>
+      <li>Prontuário eletrônico</li>
+      <li>Controle financeiro</li>
+      <li>Controle de estoque</li>
+      <li>Comissões automáticas</li>
+      <li>Dashboard de métricas</li>
+      <li>Lista de reativação</li>
+      <li>Galeria antes e depois</li>
+      <li>Teleconsulta integrada</li>
+      <li>Retornos pós-procedimento</li>
+    </ul>
+
+
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div class="right-panel">
+  <div class="form-card">
+    <h1 class="form-title">Criar sua conta</h1>
+    <p class="form-subtitle">Preencha os dados abaixo para começar</p>
+
+    <form onsubmit="handleRegister(event)" novalidate>
+
+      <p class="form-section-label">Dados pessoais</p>
+
+      <div class="form-group">
+        <label class="form-label" for="nome">Nome completo</label>
+        <input class="form-input" id="nome" type="text" placeholder="Dra. Ana Silva" autocomplete="name">
+        <span class="form-error" id="nome-error">Nome é obrigatório</span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="email">E-mail</label>
+          <input class="form-input" id="email" type="email" placeholder="ana@clinica.com" autocomplete="email">
+          <span class="form-error" id="email-error">E-mail inválido</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="tel">Telefone</label>
+          <input class="form-input" id="tel" type="tel" placeholder="(51) 99999-9999" oninput="maskTel(this)">
+          <span class="form-error" id="tel-error">Telefone obrigatório</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="senha">Senha</label>
+        <div class="input-wrapper">
+          <input class="form-input" id="senha" type="password" placeholder="Mínimo 8 caracteres" style="padding-right:42px;" autocomplete="new-password">
+          <button type="button" class="toggle-pwd" onclick="togglePwd()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <span class="form-error" id="senha-error">Mínimo 8 caracteres</span>
+      </div>
+
+      <div class="divider"></div>
+      <p class="form-section-label">Dados da clínica</p>
+
+      <div class="form-group">
+        <label class="form-label" for="clinica">Nome da clínica</label>
+        <input class="form-input" id="clinica" type="text" placeholder="Clínica Estética Ana Silva">
+        <span class="form-error" id="clinica-error">Nome da clínica é obrigatório</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Documento</label>
+        <div class="doc-row">
+          <select class="form-select" id="doc-tipo" onchange="updateDocMask()">
+            <option value="cpf">CPF</option>
+            <option value="cnpj">CNPJ</option>
+          </select>
+          <div>
+            <input class="form-input" id="doc-num" type="text" placeholder="000.000.000-00" oninput="maskDoc(this)">
+            <span class="form-error" id="doc-error">Documento inválido</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <p class="form-section-label">Pagamento</p>
+
+      <div class="form-group">
+        <label class="form-label" for="cupom">Cupom de desconto <span class="optional">(opcional)</span></label>
+        <div class="cupom-wrapper">
+          <input class="form-input" id="cupom" type="text" placeholder="CLIVIA10" style="padding-right:80px;">
+          <button type="button" class="cupom-btn" onclick="aplicarCupom()">Aplicar</button>
+        </div>
+      </div>
+
+      <div class="terms-wrapper">
+        <input type="checkbox" id="termos">
+        <label class="terms-text" for="termos">
+          Li e concordo com a <a href="#">política de privacidade</a> e os <a href="#">termos de uso</a> da Clivia
+        </label>
+      </div>
+      <span class="form-error" id="termos-error" style="display:none;margin-top:-16px;margin-bottom:12px;">Aceite os termos para continuar</span>
+
+      <button type="submit" class="btn-submit" id="submit-btn">Pagar R$97,90 →</button>
+
+    </form>
+
+    <p class="login-link">Já tem uma conta? <a href="clivia-login.html">Fazer login</a></p>
+  </div>
+</div>
+
+<script>
+// Left panel particles
+(function(){
+  var cv = document.getElementById('lc');
+  var ctx = cv.getContext('2d');
+  function resize(){ cv.width=cv.parentElement.offsetWidth; cv.height=cv.parentElement.offsetHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  var p=[];
+  for(var i=0;i<30;i++){
+    p.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      r:0.6+Math.random()*1.4,
+      vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.18,
+      a:0.08+Math.random()*0.15,
+      pulse:Math.random()*Math.PI*2, ps:0.007+Math.random()*0.01,
+      wx:Math.random()*Math.PI*2, wy:Math.random()*Math.PI*2,
+      ws:0.003+Math.random()*0.004
+    });
+  }
+  function draw(){
+    var W=cv.width,H=cv.height;
+    ctx.clearRect(0,0,W,H);
+    p.forEach(function(pt){
+      pt.pulse+=pt.ps; pt.wx+=pt.ws; pt.wy+=pt.ws*0.7;
+      pt.x+=pt.vx+Math.sin(pt.wx)*0.25;
+      pt.y+=pt.vy+Math.cos(pt.wy)*0.15;
+      if(pt.x<-10)pt.x=W+10; if(pt.x>W+10)pt.x=-10;
+      if(pt.y<-10)pt.y=H+10; if(pt.y>H+10)pt.y=-10;
+      var a=pt.a*(0.5+0.5*Math.sin(pt.pulse));
+      ctx.beginPath(); ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,255,'+a+')'; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+function togglePwd(){
+  var i = document.getElementById('senha');
+  i.type = i.type==='password'?'text':'password';
+}
+
+function maskTel(el){
+  var v = el.value.replace(/\D/g,'');
+  if(v.length<=10) v=v.replace(/(\d{2})(\d{4})(\d{0,4})/,'($1) $2-$3');
+  else v=v.replace(/(\d{2})(\d{5})(\d{0,4})/,'($1) $2-$3');
+  el.value = v.substring(0,15);
+}
+
+function updateDocMask(){
+  var tipo = document.getElementById('doc-tipo').value;
+  var el = document.getElementById('doc-num');
+  el.value = '';
+  el.placeholder = tipo==='cpf' ? '000.000.000-00' : '00.000.000/0000-00';
+}
+
+function maskDoc(el){
+  var tipo = document.getElementById('doc-tipo').value;
+  var v = el.value.replace(/\D/g,'');
+  if(tipo==='cpf'){
+    v = v.replace(/(\d{3})(\d)/,'$1.$2');
+    v = v.replace(/(\d{3})(\d)/,'$1.$2');
+    v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+    el.value = v.substring(0,14);
+  } else {
+    v = v.replace(/(\d{2})(\d)/,'$1.$2');
+    v = v.replace(/(\d{3})(\d)/,'$1.$2');
+    v = v.replace(/(\d{3})(\d)/,'$1/$2');
+    v = v.replace(/(\d{4})(\d{1,2})$/,'$1-$2');
+    el.value = v.substring(0,18);
+  }
+}
+
+function aplicarCupom(){
+  var cupom = document.getElementById('cupom').value.trim().toUpperCase();
+  if(!cupom){ alert('Digite um cupom válido'); return; }
+  // Integração com Stripe/backend aqui
+  alert('Cupom "'+cupom+'" verificado! Integração com Stripe em breve.');
+}
+
+function required(id, errorId, validator){
+  var val = document.getElementById(id).value.trim();
+  var ok = validator ? validator(val) : val.length > 0;
+  document.getElementById(id).classList.toggle('error', !ok);
+  document.getElementById(errorId).style.display = ok ? 'none' : 'block';
+  return ok;
+}
+
+function handleRegister(e){
+  e.preventDefault();
+  var ok = true;
+  ok = required('nome','nome-error') && ok;
+  ok = required('email','email-error', function(v){ return v.includes('@') && v.includes('.'); }) && ok;
+  ok = required('tel','tel-error', function(v){ return v.replace(/\D/g,'').length >= 10; }) && ok;
+  ok = required('senha','senha-error', function(v){ return v.length >= 8; }) && ok;
+  ok = required('clinica','clinica-error') && ok;
+  ok = required('doc-num','doc-error', function(v){ return v.replace(/\D/g,'').length >= 11; }) && ok;
+
+  var termos = document.getElementById('termos').checked;
+  document.getElementById('termos-error').style.display = termos ? 'none' : 'block';
+  ok = termos && ok;
+
+  if(ok){
+    var btn = document.getElementById('submit-btn');
+    btn.textContent = 'Processando...';
+    btn.disabled = true;
+    // Integração com Supabase + Stripe aqui
+    setTimeout(function(){ btn.textContent='Pagar R$97,90 →'; btn.disabled=false; }, 2000);
+  }
+}
+</script>
+</body>
+</html>

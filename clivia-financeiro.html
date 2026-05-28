@@ -89,59 +89,205 @@ tr:hover td { background:var(--cream); }
 <div class="main">
   <header class="topbar">
     <div><h1>Financeiro</h1><p>Controle de receitas e despesas</p></div>
-    <div class="topbar-right"><button class="btn btn-primary">+ Novo lançamento</button></div>
+    <div class="topbar-right"><button class="btn btn-primary" onclick="abrirLancamento()">+ Novo lançamento</button></div>
   </header>
   <div class="content">
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
-  <div class="card" style="margin-bottom:0;"><div style="padding:20px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Receita do mês</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);">R$8.420</div><div style="font-size:12px;color:var(--success);margin-top:4px;">↑ +12% vs anterior</div></div></div>
-  <div class="card" style="margin-bottom:0;"><div style="padding:20px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Despesas do mês</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);">R$2.140</div><div style="font-size:12px;color:var(--danger);margin-top:4px;">↑ +5% vs anterior</div></div></div>
-  <div class="card" style="margin-bottom:0;"><div style="padding:20px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Lucro líquido</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--success);">R$6.280</div><div style="font-size:12px;color:var(--success);margin-top:4px;">Margem 74,6%</div></div></div>
-  <div class="card" style="margin-bottom:0;"><div style="padding:20px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">A receber</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--warning);">R$1.200</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">3 parcelas em aberto</div></div></div>
+<div id="metrics" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;"></div>
+<div style="display:flex;gap:10px;margin-bottom:16px;">
+  <select class="form-control" id="filtro-tipo" style="max-width:160px;"><option value="">Todos</option><option value="Receita">Receita</option><option value="Despesa">Despesa</option></select>
+  <input class="form-control" id="filtro-mes" type="month" style="max-width:160px;">
+  <div style="flex:1;"></div>
+  <button class="btn btn-primary" onclick="abrirLancamento()">+ Novo lançamento</button>
 </div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-  <div class="card">
-    <div class="card-header"><span class="card-title">Lançamentos recentes</span><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Lançamento</button></div>
-    <div style="padding:0;">
-      <table>
-        <thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th></tr></thead>
-        <tbody>
-          <tr><td>27/05</td><td>Botox — Maria Santos</td><td><span class="badge badge-success">Receita</span></td><td style="font-weight:600;color:var(--success);">+R$ 450</td></tr>
-          <tr><td>27/05</td><td>Preenchimento — Ana Costa</td><td><span class="badge badge-success">Receita</span></td><td style="font-weight:600;color:var(--success);">+R$ 680</td></tr>
-          <tr><td>26/05</td><td>Compra insumos</td><td><span class="badge badge-danger">Despesa</span></td><td style="font-weight:600;color:var(--danger);">-R$ 320</td></tr>
-          <tr><td>25/05</td><td>Laser — Fernanda Reis</td><td><span class="badge badge-success">Receita</span></td><td style="font-weight:600;color:var(--success);">+R$ 890</td></tr>
-          <tr><td>24/05</td><td>Aluguel sala</td><td><span class="badge badge-danger">Despesa</span></td><td style="font-weight:600;color:var(--danger);">-R$ 800</td></tr>
-          <tr><td>23/05</td><td>Limpeza — Juliana Lima</td><td><span class="badge badge-success">Receita</span></td><td style="font-weight:600;color:var(--success);">+R$ 280</td></tr>
-        </tbody>
-      </table>
+<div class="card">
+  <div class="card-header"><span class="card-title">Lançamentos</span><span id="count" style="font-size:13px;color:var(--text-muted);"></span></div>
+  <div id="table-body"></div>
+</div>
+
+<div class="modal-overlay" id="modal-fin">
+  <div class="modal">
+    <h2 id="modal-title">Novo lançamento</h2>
+    <p>Registre uma receita ou despesa</p>
+    <input type="hidden" id="f-id">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tipo *</label>
+        <select class="form-control" id="f-tipo"><option value="Receita">Receita</option><option value="Despesa">Despesa</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Data *</label><input class="form-control" id="f-data" type="date"></div>
     </div>
-  </div>
-  <div class="card">
-    <div class="card-header"><span class="card-title">Procedimentos mais lucrativos</span></div>
-    <div class="card-body">
-      <div style="margin-bottom:14px;" id="proc-list">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:13px;">Botox facial</span><span style="font-size:13px;font-weight:600;">R$3.150</span></div>
-        <div style="background:var(--cream-dark);border-radius:4px;height:8px;"><div style="background:var(--copper-dark);height:8px;border-radius:4px;width:75%;"></div></div>
+    <div class="form-group"><label class="form-label">Descrição *</label><input class="form-control" id="f-desc" placeholder="Ex: Botox — Maria Santos"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Valor (R$) *</label><input class="form-control" id="f-valor" type="number" step="0.01" placeholder="0,00"></div>
+      <div class="form-group"><label class="form-label">Forma de pagamento</label>
+        <select class="form-control" id="f-pag"><option value="">Selecionar</option><option>Dinheiro</option><option>PIX</option><option>Cartão crédito</option><option>Cartão débito</option><option>Transferência</option></select>
       </div>
-      <div style="margin-bottom:14px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:13px;">Preenchimento</span><span style="font-size:13px;font-weight:600;">R$2.040</span></div>
-        <div style="background:var(--cream-dark);border-radius:4px;height:8px;"><div style="background:var(--copper);height:8px;border-radius:4px;width:48%;"></div></div>
-      </div>
-      <div style="margin-bottom:14px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:13px;">Laser CO2</span><span style="font-size:13px;font-weight:600;">R$1.780</span></div>
-        <div style="background:var(--cream-dark);border-radius:4px;height:8px;"><div style="background:var(--copper);height:8px;border-radius:4px;width:42%;"></div></div>
-      </div>
-      <div style="margin-bottom:14px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:13px;">Fio de PDO</span><span style="font-size:13px;font-weight:600;">R$950</span></div>
-        <div style="background:var(--cream-dark);border-radius:4px;height:8px;"><div style="background:var(--copper-light);height:8px;border-radius:4px;width:22%;"></div></div>
-      </div>
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:13px;">Limpeza de pele</span><span style="font-size:13px;font-weight:600;">R$500</span></div>
-        <div style="background:var(--cream-dark);border-radius:4px;height:8px;"><div style="background:var(--copper-light);height:8px;border-radius:4px;width:12%;"></div></div>
-      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Categoria</label><input class="form-control" id="f-cat" placeholder="Ex: Injetáveis, Aluguel..."></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-fin')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarFin()">Salvar</button>
     </div>
   </div>
 </div>
+
+<div class="confirm-dialog" id="confirm-dialog">
+  <div class="confirm-box">
+    <h3>Confirmar exclusão</h3>
+    <p id="confirm-msg">Tem certeza que deseja excluir?</p>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-primary" id="confirm-yes" style="background:var(--danger);">Excluir</button>
+    </div>
+  </div>
 </div>
 </div>
+</div>
+<style>
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:32px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:modalIn 0.2s ease; }
+.modal.modal-lg { max-width:600px; }
+@keyframes modalIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; margin-bottom:6px; }
+.modal p { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:12px; font-weight:500; margin-bottom:5px; color:var(--text); }
+.form-control { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; background:#fff; transition:border-color 0.2s; }
+.form-control:focus { border-color:var(--copper); box-shadow:0 0 0 3px rgba(122,102,85,0.1); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:10px; margin-top:24px; }
+.modal-actions .btn { flex:1; padding:11px; justify-content:center; }
+.empty-state { padding:56px 22px; text-align:center; }
+.empty-icon { width:56px; height:56px; background:var(--copper-pale); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.empty-title { font-size:15px; font-weight:500; margin-bottom:6px; }
+.empty-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-dialog { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center; }
+.confirm-dialog.open { display:flex; }
+.confirm-box { background:#fff; border-radius:16px; padding:28px; max-width:360px; width:90%; text-align:center; }
+.confirm-box h3 { font-size:17px; font-weight:600; margin-bottom:8px; }
+.confirm-box p { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-btns { display:flex; gap:10px; }
+.confirm-btns .btn { flex:1; }
+</style><script>
+// ── SHARED DATA LAYER ──
+const DB = {
+  get: k => JSON.parse(localStorage.getItem('clivia_'+k)||'[]'),
+  set: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  getObj: (k,d={}) => JSON.parse(localStorage.getItem('clivia_'+k)||JSON.stringify(d)),
+  setObj: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  nextId: k => { const d=DB.get(k); return d.length ? Math.max(...d.map(x=>x.id||0))+1 : 1; }
+};
+
+// Modal helpers
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openConfirm(msg, onYes){
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-yes').onclick = function(){ closeConfirm(); onYes(); };
+}
+function closeConfirm(){ document.getElementById('confirm-dialog').classList.remove('open'); }
+
+// Toast notification
+function toast(msg, type='success'){
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;background:'+(type==='success'?'#2D6A4F':type==='error'?'#C0392B':'#2E2218')+';box-shadow:0 4px 20px rgba(0,0,0,0.15);animation:fadeUp 0.3s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+function abrirLancamento(){
+  limparFin();
+  document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
+  openModal('modal-fin');
+}
+
+function renderMetrics(){
+  const mes = document.getElementById('filtro-mes').value;
+  let fins = DB.get('financeiro');
+  if(mes) fins = fins.filter(f=>f.data&&f.data.startsWith(mes));
+  const rec = fins.filter(f=>f.tipo==='Receita').reduce((s,f)=>s+parseFloat(f.valor||0),0);
+  const des = fins.filter(f=>f.tipo==='Despesa').reduce((s,f)=>s+parseFloat(f.valor||0),0);
+  const lucro = rec - des;
+  const fmt = v => 'R$'+v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  document.getElementById('metrics').innerHTML = `
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Receitas</div><div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--success);">${fmt(rec)}</div></div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Despesas</div><div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--danger);">${fmt(des)}</div></div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Lucro líquido</div><div style="font-family:'DM Serif Display',serif;font-size:26px;color:${lucro>=0?'var(--success)':'var(--danger)'};">${fmt(lucro)}</div></div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Lançamentos</div><div style="font-family:'DM Serif Display',serif;font-size:26px;">${fins.length}</div></div>
+  `;
+}
+
+function render(){
+  renderMetrics();
+  const tipo = document.getElementById('filtro-tipo').value;
+  const mes = document.getElementById('filtro-mes').value;
+  let fins = DB.get('financeiro');
+  if(tipo) fins = fins.filter(f=>f.tipo===tipo);
+  if(mes) fins = fins.filter(f=>f.data&&f.data.startsWith(mes));
+  fins.sort((a,b)=>b.data>a.data?1:-1);
+  document.getElementById('count').textContent = fins.length + ' lançamento'+(fins.length!==1?'s':'');
+  const body = document.getElementById('table-body');
+  if(!fins.length){ body.innerHTML='<div class="empty-state"><div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="empty-title">Nenhum lançamento</div><div class="empty-desc">Registre receitas e despesas para acompanhar o financeiro.</div><button class="btn btn-primary" onclick="abrirLancamento()">+ Novo lançamento</button></div>'; return; }
+  body.innerHTML='<table><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Pagamento</th><th>Tipo</th><th>Valor</th><th>Ações</th></tr></thead><tbody>'+fins.map(f=>{
+    const dt=f.data?new Date(f.data+'T12:00:00').toLocaleDateString('pt-BR'):'—';
+    const cor=f.tipo==='Receita'?'var(--success)':'var(--danger)';
+    const sinal=f.tipo==='Receita'?'+':'-';
+    return `<tr><td>${dt}</td><td style="font-weight:500;">${f.desc}</td><td>${f.cat||'—'}</td><td>${f.pag||'—'}</td><td><span class="badge ${f.tipo==='Receita'?'badge-success':'badge-danger'}">${f.tipo}</span></td><td style="font-weight:600;color:${cor};">${sinal}R$${parseFloat(f.valor).toFixed(2).replace('.',',')}</td><td style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;" onclick="editarFin(${f.id})">Editar</button><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;color:var(--danger);border-color:rgba(192,57,43,0.3);" onclick="excluirFin(${f.id})">Excluir</button></td></tr>`;
+  }).join('')+'</tbody></table>';
+}
+
+function salvarFin(){
+  const desc=document.getElementById('f-desc').value.trim();
+  const valor=document.getElementById('f-valor').value;
+  const data=document.getElementById('f-data').value;
+  if(!desc||!valor||!data){toast('Preencha descrição, valor e data','error');return;}
+  const id=document.getElementById('f-id').value;
+  const fins=DB.get('financeiro');
+  const obj={id:id?parseInt(id):DB.nextId('financeiro'),tipo:document.getElementById('f-tipo').value,data,desc,valor:parseFloat(valor),pag:document.getElementById('f-pag').value,cat:document.getElementById('f-cat').value};
+  if(id){const i=fins.findIndex(f=>f.id===parseInt(id));fins[i]=obj;}else{fins.push(obj);}
+  DB.set('financeiro',fins);
+  closeModal('modal-fin');
+  toast(id?'Lançamento atualizado!':'Lançamento registrado!');
+  render();
+}
+
+function editarFin(id){
+  const f=DB.get('financeiro').find(x=>x.id===id);
+  document.getElementById('modal-title').textContent='Editar lançamento';
+  document.getElementById('f-id').value=f.id;
+  document.getElementById('f-tipo').value=f.tipo;
+  document.getElementById('f-data').value=f.data||'';
+  document.getElementById('f-desc').value=f.desc;
+  document.getElementById('f-valor').value=f.valor;
+  document.getElementById('f-pag').value=f.pag||'';
+  document.getElementById('f-cat').value=f.cat||'';
+  openModal('modal-fin');
+}
+
+function excluirFin(id){
+  openConfirm('Excluir este lançamento?',()=>{
+    DB.set('financeiro',DB.get('financeiro').filter(f=>f.id!==id));
+    toast('Lançamento excluído.','error');render();
+  });
+}
+
+function limparFin(){
+  ['f-id','f-desc','f-valor','f-cat'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('f-tipo').value='Receita';
+  document.getElementById('f-pag').value='';
+  document.getElementById('modal-title').textContent='Novo lançamento';
+}
+
+// Set current month as default filter
+const hoje = new Date().toISOString().slice(0,7);
+document.getElementById('filtro-mes').value = hoje;
+document.getElementById('filtro-tipo').addEventListener('change',render);
+document.getElementById('filtro-mes').addEventListener('change',render);
+document.getElementById('modal-fin').addEventListener('click',function(e){if(e.target===this)closeModal('modal-fin');});
+render();
+</script>
 </body>
 </html>

@@ -89,84 +89,212 @@ tr:hover td { background:var(--cream); }
 <div class="main">
   <header class="topbar">
     <div><h1>Prontuário</h1><p>Histórico clínico dos pacientes</p></div>
-    <div class="topbar-right"><button class="btn btn-primary">+ Nova evolução</button></div>
+    <div class="topbar-right"></div>
   </header>
   <div class="content">
-<div style="display:grid;grid-template-columns:280px 1fr;gap:20px;">
+<div style="display:grid;grid-template-columns:260px 1fr;gap:20px;">
   <div>
-    <div class="search-bar" style="margin-bottom:12px;">
-      <input class="search-input" placeholder="Buscar paciente...">
-    </div>
-    <div class="card">
-      <div class="card-body" style="padding:8px;">
-        <div style="padding:10px 12px;border-radius:8px;background:var(--copper-pale);cursor:pointer;margin-bottom:4px;">
-          <div style="font-size:13px;font-weight:500;">Maria Santos</div>
-          <div style="font-size:11px;color:var(--text-muted);">Última consulta: 27/05/2026</div>
-        </div>
-        <div style="padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''">
-          <div style="font-size:13px;font-weight:500;">Ana Costa</div>
-          <div style="font-size:11px;color:var(--text-muted);">Última consulta: 25/05/2026</div>
-        </div>
-        <div style="padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''">
-          <div style="font-size:13px;font-weight:500;">Juliana Lima</div>
-          <div style="font-size:11px;color:var(--text-muted);">Última consulta: 20/05/2026</div>
-        </div>
-        <div style="padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''">
-          <div style="font-size:13px;font-weight:500;">Fernanda Reis</div>
-          <div style="font-size:11px;color:var(--text-muted);">Última consulta: 15/05/2026</div>
-        </div>
-        <div style="padding:10px 12px;border-radius:8px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''">
-          <div style="font-size:13px;font-weight:500;">Carla Mendes</div>
-          <div style="font-size:11px;color:var(--text-muted);">Última consulta: 10/05/2026</div>
-        </div>
+    <div style="margin-bottom:12px;"><input class="form-control" id="search" placeholder="Buscar paciente..." oninput="renderLista()"></div>
+    <div class="card"><div class="card-body" style="padding:8px;"><div id="lista-pacientes"></div></div></div>
+  </div>
+  <div id="painel-prontuario">
+    <div class="card"><div class="empty-state">
+      <div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="empty-title">Selecione um paciente</div>
+      <div class="empty-desc">Escolha um paciente na lista ao lado para ver o prontuário.</div>
+    </div></div>
+  </div>
+</div>
+
+<!-- Modal evolução -->
+<div class="modal-overlay" id="modal-evol">
+  <div class="modal modal-lg">
+    <h2 id="evol-title">Nova evolução</h2>
+    <p>Registre o atendimento realizado</p>
+    <input type="hidden" id="ev-id">
+    <input type="hidden" id="ev-pac-id">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Data *</label><input class="form-control" id="ev-data" type="date"></div>
+      <div class="form-group"><label class="form-label">Procedimento *</label>
+        <select class="form-control" id="ev-proc"><option value="">Selecionar</option></select>
       </div>
     </div>
+    <div class="form-group"><label class="form-label">Profissional</label>
+      <select class="form-control" id="ev-prof"><option value="">Selecionar</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Evolução / Observações *</label><textarea class="form-control" id="ev-texto" rows="4" placeholder="Descreva o procedimento realizado, materiais utilizados, observações clínicas..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Valor cobrado (R$)</label><input class="form-control" id="ev-valor" type="number" step="0.01" placeholder="0,00"></div>
+      <div class="form-group"><label class="form-label">Retorno em (dias)</label><input class="form-control" id="ev-retorno" type="number" placeholder="Ex: 15"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-evol')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarEvol()">Salvar evolução</button>
+    </div>
   </div>
-  <div>
+</div>
+
+<div class="confirm-dialog" id="confirm-dialog">
+  <div class="confirm-box">
+    <h3>Confirmar exclusão</h3>
+    <p id="confirm-msg">Tem certeza que deseja excluir?</p>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-primary" id="confirm-yes" style="background:var(--danger);">Excluir</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<style>
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:32px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:modalIn 0.2s ease; }
+.modal.modal-lg { max-width:600px; }
+@keyframes modalIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; margin-bottom:6px; }
+.modal p { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:12px; font-weight:500; margin-bottom:5px; color:var(--text); }
+.form-control { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; background:#fff; transition:border-color 0.2s; }
+.form-control:focus { border-color:var(--copper); box-shadow:0 0 0 3px rgba(122,102,85,0.1); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:10px; margin-top:24px; }
+.modal-actions .btn { flex:1; padding:11px; justify-content:center; }
+.empty-state { padding:56px 22px; text-align:center; }
+.empty-icon { width:56px; height:56px; background:var(--copper-pale); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.empty-title { font-size:15px; font-weight:500; margin-bottom:6px; }
+.empty-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-dialog { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center; }
+.confirm-dialog.open { display:flex; }
+.confirm-box { background:#fff; border-radius:16px; padding:28px; max-width:360px; width:90%; text-align:center; }
+.confirm-box h3 { font-size:17px; font-weight:600; margin-bottom:8px; }
+.confirm-box p { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-btns { display:flex; gap:10px; }
+.confirm-btns .btn { flex:1; }
+</style><script>
+// ── SHARED DATA LAYER ──
+const DB = {
+  get: k => JSON.parse(localStorage.getItem('clivia_'+k)||'[]'),
+  set: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  getObj: (k,d={}) => JSON.parse(localStorage.getItem('clivia_'+k)||JSON.stringify(d)),
+  setObj: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  nextId: k => { const d=DB.get(k); return d.length ? Math.max(...d.map(x=>x.id||0))+1 : 1; }
+};
+
+// Modal helpers
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openConfirm(msg, onYes){
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-yes').onclick = function(){ closeConfirm(); onYes(); };
+}
+function closeConfirm(){ document.getElementById('confirm-dialog').classList.remove('open'); }
+
+// Toast notification
+function toast(msg, type='success'){
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;background:'+(type==='success'?'#2D6A4F':type==='error'?'#C0392B':'#2E2218')+';box-shadow:0 4px 20px rgba(0,0,0,0.15);animation:fadeUp 0.3s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+let pacienteAtivo = null;
+
+function renderLista(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const ps=DB.get('pacientes').filter(p=>p.nome.toLowerCase().includes(q));
+  const el=document.getElementById('lista-pacientes');
+  if(!ps.length){el.innerHTML='<div style="padding:12px;font-size:13px;color:var(--text-muted);text-align:center;">Nenhum paciente</div>';return;}
+  el.innerHTML=ps.map(p=>{
+    const evols=DB.get('evolucoes_'+p.id);
+    const ultima=evols.length?new Date(evols[evols.length-1].data+'T12:00:00').toLocaleDateString('pt-BR'):'Sem atendimento';
+    const ativo=pacienteAtivo&&pacienteAtivo.id===p.id;
+    return `<div onclick="selecionarPaciente(${p.id})" style="padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;background:${ativo?'var(--copper-pale)':''};transition:background 0.15s;" onmouseover="if(!${ativo})this.style.background='var(--cream)'" onmouseout="if(!${ativo})this.style.background=''"><div style="font-size:13px;font-weight:${ativo?600:500};">${p.nome}</div><div style="font-size:11px;color:var(--text-muted);">Último: ${ultima}</div></div>`;
+  }).join('');
+}
+
+function selecionarPaciente(id){
+  pacienteAtivo = DB.get('pacientes').find(p=>p.id===id);
+  renderLista();
+  renderProntuario();
+}
+
+function renderProntuario(){
+  if(!pacienteAtivo){return;}
+  const p=pacienteAtivo;
+  const evols=DB.get('evolucoes_'+p.id);
+  const idade=p.nasc?Math.floor((new Date()-new Date(p.nasc))/31557600000)+' anos':'—';
+  document.getElementById('painel-prontuario').innerHTML=`
     <div class="card" style="margin-bottom:16px;">
       <div class="card-header">
         <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:44px;height:44px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--copper);font-size:16px;">MS</div>
-          <div>
-            <div style="font-size:16px;font-weight:600;">Maria Santos</div>
-            <div style="font-size:12px;color:var(--text-muted);">34 anos · (51) 99999-1234</div>
-          </div>
+          <div style="width:44px;height:44px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--copper);font-size:16px;">${p.nome.charAt(0)}</div>
+          <div><div style="font-size:16px;font-weight:600;">${p.nome}</div><div style="font-size:12px;color:var(--text-muted);">${idade} · ${p.tel||'—'}</div></div>
         </div>
-        <button class="btn btn-primary" style="font-size:12px;padding:8px 14px;">+ Nova evolução</button>
+        <button class="btn btn-primary" style="font-size:12px;padding:8px 14px;" onclick="abrirEvol()">+ Nova evolução</button>
       </div>
       <div class="card-body">
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
-          <div style="background:var(--cream);border-radius:8px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Alergias</div><div style="font-size:13px;font-weight:500;margin-top:4px;">Nenhuma</div></div>
-          <div style="background:var(--cream);border-radius:8px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Tipo sanguíneo</div><div style="font-size:13px;font-weight:500;margin-top:4px;">A+</div></div>
-          <div style="background:var(--cream);border-radius:8px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Total consultas</div><div style="font-size:13px;font-weight:500;margin-top:4px;">12</div></div>
-          <div style="background:var(--cream);border-radius:8px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Desde</div><div style="font-size:13px;font-weight:500;margin-top:4px;">Mar 2024</div></div>
+          <div style="background:var(--cream);border-radius:8px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Alergias</div><div style="font-size:13px;font-weight:500;margin-top:4px;">${p.alergia||'Nenhuma'}</div></div>
+          <div style="background:var(--cream);border-radius:8px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Tipo sanguíneo</div><div style="font-size:13px;font-weight:500;margin-top:4px;">${p.sangue||'—'}</div></div>
+          <div style="background:var(--cream);border-radius:8px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Total consultas</div><div style="font-size:13px;font-weight:500;margin-top:4px;">${evols.length}</div></div>
+          <div style="background:var(--cream);border-radius:8px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Obs</div><div style="font-size:13px;font-weight:500;margin-top:4px;">${p.obs||'—'}</div></div>
         </div>
-        <div style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;font-size:11px;">Histórico de evoluções</div>
-        <div style="border-left:2px solid var(--border);padding-left:20px;">
-          <div style="margin-bottom:20px;position:relative;">
-            <div style="position:absolute;left:-26px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--copper-dark);border:2px solid var(--cream);"></div>
-            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">27/05/2026 · Dra. Ana Silva</div>
-            <div style="font-size:13px;font-weight:500;margin-bottom:4px;">Botox facial — 40 unidades</div>
-            <div style="font-size:13px;color:var(--text-muted);">Aplicação em glabela, testa e patas de galinha. Paciente tolera bem. Retorno em 15 dias para avaliação.</div>
-          </div>
-          <div style="margin-bottom:20px;position:relative;">
-            <div style="position:absolute;left:-26px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--copper-light);border:2px solid var(--cream);"></div>
-            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">10/04/2026 · Dra. Ana Silva</div>
-            <div style="font-size:13px;font-weight:500;margin-bottom:4px;">Retorno Botox</div>
-            <div style="font-size:13px;color:var(--text-muted);">Resultado satisfatório. Pequeno toque em testa lado esquerdo. Paciente muito satisfeita.</div>
-          </div>
-          <div style="position:relative;">
-            <div style="position:absolute;left:-26px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--copper-light);border:2px solid var(--cream);"></div>
-            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">15/03/2026 · Dra. Ana Silva</div>
-            <div style="font-size:13px;font-weight:500;margin-bottom:4px;">Preenchimento labial — 1ml ácido hialurônico</div>
-            <div style="font-size:13px;color:var(--text-muted);">Técnica de moldagem. Sem intercorrências. Orientações de pós-procedimento fornecidas.</div>
-          </div>
-        </div>
+        ${evols.length===0?'<div class="empty-state"><div class="empty-title">Nenhuma evolução registrada</div><div class="empty-desc">Clique em "+ Nova evolução" para registrar o primeiro atendimento.</div></div>':'<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:16px;">Histórico</div><div style="border-left:2px solid var(--border);padding-left:20px;">'+evols.slice().reverse().map((e,i)=>`<div style="margin-bottom:20px;position:relative;"><div style="position:absolute;left:-26px;top:4px;width:10px;height:10px;border-radius:50%;background:${i===0?'var(--copper-dark)':'var(--copper-light)'};border:2px solid var(--cream);"></div><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div><div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">${new Date(e.data+'T12:00:00').toLocaleDateString('pt-BR')}${e.prof?' · '+e.prof:''}</div><div style="font-size:13px;font-weight:500;margin-bottom:4px;">${e.proc||'Atendimento'}${e.valor?' — R$'+parseFloat(e.valor).toFixed(2):''}</div><div style="font-size:13px;color:var(--text-muted);">${e.texto}</div></div><button class="btn btn-outline" style="padding:4px 8px;font-size:11px;color:var(--danger);border-color:rgba(192,57,43,0.3);flex-shrink:0;margin-left:12px;" onclick="excluirEvol(${e.id})">Excluir</button></div></div>`).join('')+'</div>'}
       </div>
-    </div>
-  </div>
-</div>
-</div>
-</div>
+    </div>`;
+}
+
+function abrirEvol(){
+  document.getElementById('ev-pac-id').value=pacienteAtivo.id;
+  document.getElementById('ev-id').value='';
+  document.getElementById('ev-data').value=new Date().toISOString().split('T')[0];
+  document.getElementById('ev-texto').value='';
+  document.getElementById('ev-valor').value='';
+  document.getElementById('ev-retorno').value='';
+  const procs=DB.get('procedimentos');
+  const profs=DB.get('profissionais');
+  document.getElementById('ev-proc').innerHTML='<option value="">Selecionar</option>'+procs.map(p=>`<option>${p.nome}</option>`).join('');
+  document.getElementById('ev-prof').innerHTML='<option value="">Selecionar</option>'+profs.map(p=>`<option>${p.nome}</option>`).join('');
+  openModal('modal-evol');
+}
+
+function salvarEvol(){
+  const texto=document.getElementById('ev-texto').value.trim();
+  const data=document.getElementById('ev-data').value;
+  if(!texto||!data){toast('Preencha data e evolução','error');return;}
+  const pacId=parseInt(document.getElementById('ev-pac-id').value);
+  const evols=DB.get('evolucoes_'+pacId);
+  const obj={id:DB.nextId('evolucoes_'+pacId)||1,data,proc:document.getElementById('ev-proc').value,prof:document.getElementById('ev-prof').value,texto,valor:document.getElementById('ev-valor').value,retorno:document.getElementById('ev-retorno').value};
+  evols.push(obj);
+  DB.set('evolucoes_'+pacId,evols);
+  // Add retorno if set
+  if(obj.retorno&&obj.proc){
+    const retornos=DB.get('retornos');
+    const dt=new Date(data+'T12:00:00');
+    dt.setDate(dt.getDate()+parseInt(obj.retorno));
+    retornos.push({id:DB.nextId('retornos')||1,pacienteId:pacId,pacienteNome:pacienteAtivo.nome,proc:obj.proc,dataProc:data,dataRetorno:dt.toISOString().split('T')[0],status:'Pendente'});
+    DB.set('retornos',retornos);
+  }
+  closeModal('modal-evol');
+  toast('Evolução registrada!');
+  renderProntuario();
+}
+
+function excluirEvol(id){
+  const pacId=pacienteAtivo.id;
+  openConfirm('Excluir esta evolução?',()=>{
+    DB.set('evolucoes_'+pacId,DB.get('evolucoes_'+pacId).filter(e=>e.id!==id));
+    toast('Evolução excluída.','error');renderProntuario();
+  });
+}
+
+document.getElementById('modal-evol').addEventListener('click',function(e){if(e.target===this)closeModal('modal-evol');});
+renderLista();
+</script>
 </body>
 </html>

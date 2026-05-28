@@ -89,44 +89,175 @@ tr:hover td { background:var(--cream); }
 <div class="main">
   <header class="topbar">
     <div><h1>Pacientes</h1><p>Gerencie sua base de pacientes</p></div>
-    <div class="topbar-right"><button class="btn btn-primary" onclick="alert('Modal novo paciente')">+ Novo paciente</button></div>
+    <div class="topbar-right"><button class="btn btn-primary" onclick="openModal('modal-paciente')">+ Novo paciente</button></div>
   </header>
   <div class="content">
 <div class="search-bar">
-  <input class="search-input" placeholder="Buscar paciente por nome, telefone ou email..." oninput="filtrar(this.value)">
-  <button class="btn btn-outline">Filtros</button>
-  <button class="btn btn-primary" onclick="alert('Modal novo paciente')">+ Novo paciente</button>
+  <input class="form-control" id="search" placeholder="Buscar paciente por nome ou telefone..." oninput="render()">
+  <button class="btn btn-primary" onclick="openModal('modal-paciente')">+ Novo paciente</button>
 </div>
 <div class="card">
   <div class="card-header">
-    <span class="card-title">Todos os pacientes</span>
-    <span style="font-size:13px;color:var(--text-muted);">134 pacientes</span>
+    <span class="card-title">Pacientes cadastrados</span>
+    <span id="count" style="font-size:13px;color:var(--text-muted);">0 pacientes</span>
   </div>
-  <div class="card-body" style="padding:0;">
-    <table id="tabela-pacientes">
-      <thead><tr><th>Paciente</th><th>Telefone</th><th>Último atendimento</th><th>Procedimentos</th><th>Status</th><th>Ações</th></tr></thead>
-      <tbody>
-        <tr><td><div style="font-weight:500;">Maria Santos</div><div style="font-size:11px;color:var(--text-muted);">maria@email.com</div></td><td>(51) 99999-1234</td><td>27/05/2026</td><td>Botox, Preenchimento</td><td><span class="badge badge-success">Ativo</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;" onclick="alert('Perfil da paciente')">Ver perfil</button></td></tr>
-        <tr><td><div style="font-weight:500;">Ana Costa</div><div style="font-size:11px;color:var(--text-muted);">ana@email.com</div></td><td>(51) 99999-5678</td><td>25/05/2026</td><td>Preenchimento labial</td><td><span class="badge badge-success">Ativo</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver perfil</button></td></tr>
-        <tr><td><div style="font-weight:500;">Juliana Lima</div><div style="font-size:11px;color:var(--text-muted);">ju@email.com</div></td><td>(51) 99999-9012</td><td>20/05/2026</td><td>Limpeza de pele</td><td><span class="badge badge-success">Ativo</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver perfil</button></td></tr>
-        <tr><td><div style="font-weight:500;">Paula Silva</div><div style="font-size:11px;color:var(--text-muted);">paula@email.com</div></td><td>(51) 99999-3456</td><td>20/03/2026</td><td>Botox</td><td><span class="badge badge-warning">Inativa</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver perfil</button></td></tr>
-        <tr><td><div style="font-weight:500;">Fernanda Reis</div><div style="font-size:11px;color:var(--text-muted);">fe@email.com</div></td><td>(51) 99999-7890</td><td>15/05/2026</td><td>Laser CO2, Peeling</td><td><span class="badge badge-success">Ativo</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver perfil</button></td></tr>
-        <tr><td><div style="font-weight:500;">Carla Mendes</div><div style="font-size:11px;color:var(--text-muted);">ca@email.com</div></td><td>(51) 99999-2345</td><td>10/05/2026</td><td>Fio de PDO</td><td><span class="badge badge-success">Ativo</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver perfil</button></td></tr>
-        <tr><td><div style="font-weight:500;">Beatriz Moura</div><div style="font-size:11px;color:var(--text-muted);">be@email.com</div></td><td>(51) 99999-6789</td><td>01/04/2026</td><td>Peeling</td><td><span class="badge badge-warning">Inativa</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver perfil</button></td></tr>
-        <tr><td><div style="font-weight:500;">Tâmara Castro</div><div style="font-size:11px;color:var(--text-muted);">ta@email.com</div></td><td>(51) 99999-0123</td><td>18/04/2026</td><td>Limpeza de pele</td><td><span class="badge badge-warning">Inativa</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver perfil</button></td></tr>
-      </tbody>
-    </table>
+  <div id="table-body"></div>
+</div>
+
+<!-- MODAL ADD/EDIT -->
+<div class="modal-overlay" id="modal-paciente">
+  <div class="modal">
+    <h2 id="modal-title">Novo paciente</h2>
+    <p>Preencha os dados do paciente</p>
+    <input type="hidden" id="p-id">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nome completo *</label><input class="form-control" id="p-nome" placeholder="Nome do paciente"></div>
+      <div class="form-group"><label class="form-label">Data de nascimento</label><input class="form-control" id="p-nasc" type="date"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Telefone *</label><input class="form-control" id="p-tel" placeholder="(51) 99999-9999" oninput="maskTel(this)"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-control" id="p-email" type="email" placeholder="email@exemplo.com"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">CPF</label><input class="form-control" id="p-cpf" placeholder="000.000.000-00"></div>
+      <div class="form-group"><label class="form-label">Tipo sanguíneo</label>
+        <select class="form-control" id="p-sangue"><option value="">Selecionar</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Alergias</label><input class="form-control" id="p-alergia" placeholder="Ex: Dipirona, Penicilina..."></div>
+    <div class="form-group"><label class="form-label">Observações</label><textarea class="form-control" id="p-obs" rows="2" placeholder="Observações gerais..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-paciente')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarPaciente()">Salvar paciente</button>
+    </div>
   </div>
 </div>
-<script>
-function filtrar(q){
-  q = q.toLowerCase();
-  document.querySelectorAll('#tabela-pacientes tbody tr').forEach(function(tr){
-    tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+
+<div class="confirm-dialog" id="confirm-dialog">
+  <div class="confirm-box">
+    <h3>Confirmar exclusão</h3>
+    <p id="confirm-msg">Tem certeza que deseja excluir?</p>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-primary" id="confirm-yes" style="background:var(--danger);">Excluir</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<style>
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:32px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:modalIn 0.2s ease; }
+.modal.modal-lg { max-width:600px; }
+@keyframes modalIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; margin-bottom:6px; }
+.modal p { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:12px; font-weight:500; margin-bottom:5px; color:var(--text); }
+.form-control { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; background:#fff; transition:border-color 0.2s; }
+.form-control:focus { border-color:var(--copper); box-shadow:0 0 0 3px rgba(122,102,85,0.1); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:10px; margin-top:24px; }
+.modal-actions .btn { flex:1; padding:11px; justify-content:center; }
+.empty-state { padding:56px 22px; text-align:center; }
+.empty-icon { width:56px; height:56px; background:var(--copper-pale); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.empty-title { font-size:15px; font-weight:500; margin-bottom:6px; }
+.empty-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-dialog { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center; }
+.confirm-dialog.open { display:flex; }
+.confirm-box { background:#fff; border-radius:16px; padding:28px; max-width:360px; width:90%; text-align:center; }
+.confirm-box h3 { font-size:17px; font-weight:600; margin-bottom:8px; }
+.confirm-box p { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-btns { display:flex; gap:10px; }
+.confirm-btns .btn { flex:1; }
+</style><script>
+// ── SHARED DATA LAYER ──
+const DB = {
+  get: k => JSON.parse(localStorage.getItem('clivia_'+k)||'[]'),
+  set: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  getObj: (k,d={}) => JSON.parse(localStorage.getItem('clivia_'+k)||JSON.stringify(d)),
+  setObj: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  nextId: k => { const d=DB.get(k); return d.length ? Math.max(...d.map(x=>x.id||0))+1 : 1; }
+};
+
+// Modal helpers
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openConfirm(msg, onYes){
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-yes').onclick = function(){ closeConfirm(); onYes(); };
+}
+function closeConfirm(){ document.getElementById('confirm-dialog').classList.remove('open'); }
+
+// Toast notification
+function toast(msg, type='success'){
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;background:'+(type==='success'?'#2D6A4F':type==='error'?'#C0392B':'#2E2218')+';box-shadow:0 4px 20px rgba(0,0,0,0.15);animation:fadeUp 0.3s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+function maskTel(el){ let v=el.value.replace(/\D/g,''); if(v.length<=10) v=v.replace(/(\d{2})(\d{4})(\d{0,4})/,'($1) $2-$3'); else v=v.replace(/(\d{2})(\d{5})(\d{0,4})/,'($1) $2-$3'); el.value=v.substring(0,15); }
+function calcIdade(nasc){ if(!nasc)return ''; const d=new Date(), n=new Date(nasc); return Math.floor((d-n)/31557600000)+' anos'; }
+
+function render(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const ps=DB.get('pacientes').filter(p=>p.nome.toLowerCase().includes(q)||(p.tel||'').includes(q));
+  document.getElementById('count').textContent=ps.length+' paciente'+(ps.length!==1?'s':'');
+  const body=document.getElementById('table-body');
+  if(!ps.length){ body.innerHTML='<div class="empty-state"><div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="empty-title">Nenhum paciente cadastrado</div><div class="empty-desc">Clique em "+ Novo paciente" para começar.</div></div>'; return; }
+  body.innerHTML='<table><thead><tr><th>Paciente</th><th>Telefone</th><th>Idade</th><th>Tipo sang.</th><th>Status</th><th>Ações</th></tr></thead><tbody>'+ps.map(p=>`<tr><td><div style="font-weight:500;">${p.nome}</div><div style="font-size:11px;color:var(--text-muted);">${p.email||'—'}</div></td><td>${p.tel||'—'}</td><td>${calcIdade(p.nasc)||'—'}</td><td>${p.sangue||'—'}</td><td><span class="badge badge-success">Ativo</span></td><td style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;" onclick="editarPaciente(${p.id})">Editar</button><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;color:var(--danger);border-color:rgba(192,57,43,0.3);" onclick="excluirPaciente(${p.id})">Excluir</button></td></tr>`).join('')+'</tbody></table>';
+}
+
+function salvarPaciente(){
+  const nome=document.getElementById('p-nome').value.trim();
+  if(!nome){toast('Nome é obrigatório','error');return;}
+  const id=document.getElementById('p-id').value;
+  const ps=DB.get('pacientes');
+  const obj={id:id?parseInt(id):DB.nextId('pacientes'),nome,nasc:document.getElementById('p-nasc').value,tel:document.getElementById('p-tel').value,email:document.getElementById('p-email').value,cpf:document.getElementById('p-cpf').value,sangue:document.getElementById('p-sangue').value,alergia:document.getElementById('p-alergia').value,obs:document.getElementById('p-obs').value,criado:new Date().toISOString()};
+  if(id){ const i=ps.findIndex(p=>p.id===parseInt(id)); ps[i]=obj; } else { ps.push(obj); }
+  DB.set('pacientes',ps);
+  closeModal('modal-paciente');
+  limparForm();
+  toast(id?'Paciente atualizado!':'Paciente cadastrado!');
+  render();
+}
+
+function editarPaciente(id){
+  const p=DB.get('pacientes').find(x=>x.id===id);
+  document.getElementById('modal-title').textContent='Editar paciente';
+  document.getElementById('p-id').value=p.id;
+  document.getElementById('p-nome').value=p.nome;
+  document.getElementById('p-nasc').value=p.nasc||'';
+  document.getElementById('p-tel').value=p.tel||'';
+  document.getElementById('p-email').value=p.email||'';
+  document.getElementById('p-cpf').value=p.cpf||'';
+  document.getElementById('p-sangue').value=p.sangue||'';
+  document.getElementById('p-alergia').value=p.alergia||'';
+  document.getElementById('p-obs').value=p.obs||'';
+  openModal('modal-paciente');
+}
+
+function excluirPaciente(id){
+  const p=DB.get('pacientes').find(x=>x.id===id);
+  openConfirm('Excluir "'+p.nome+'"? Esta ação não pode ser desfeita.',()=>{
+    DB.set('pacientes',DB.get('pacientes').filter(x=>x.id!==id));
+    toast('Paciente excluído.','error'); render();
   });
 }
+
+function limparForm(){
+  ['p-id','p-nome','p-nasc','p-tel','p-email','p-cpf','p-alergia','p-obs'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('p-sangue').value='';
+  document.getElementById('modal-title').textContent='Novo paciente';
+}
+
+document.getElementById('modal-paciente').addEventListener('click',function(e){ if(e.target===this){closeModal('modal-paciente');limparForm();} });
+render();
 </script>
-</div>
-</div>
 </body>
 </html>

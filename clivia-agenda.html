@@ -89,43 +89,211 @@ tr:hover td { background:var(--cream); }
 <div class="main">
   <header class="topbar">
     <div><h1>Agenda</h1><p>Gerencie seus agendamentos</p></div>
-    <div class="topbar-right"><button class="btn btn-primary" onclick="alert('Modal de novo agendamento')">+ Novo agendamento</button></div>
+    <div class="topbar-right"><button class="btn btn-primary" onclick="abrirNovoAgend()">+ Novo agendamento</button></div>
   </header>
   <div class="content">
+<div style="display:flex;gap:10px;margin-bottom:20px;">
+  <input class="form-control" id="filtro-data" type="date" style="max-width:180px;">
+  <select class="form-control" id="filtro-status" style="max-width:160px;"><option value="">Todos os status</option><option value="Confirmado">Confirmado</option><option value="Pendente">Pendente</option><option value="Concluído">Concluído</option><option value="Cancelado">Cancelado</option></select>
+  <div style="flex:1;"></div>
+  <button class="btn btn-primary" onclick="abrirNovoAgend()">+ Novo agendamento</button>
+</div>
 <div class="card">
   <div class="card-header">
-    <span class="card-title">Maio 2026</span>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-outline" style="padding:6px 12px;">‹</button>
-      <button class="btn btn-outline" style="padding:6px 12px;">Hoje</button>
-      <button class="btn btn-outline" style="padding:6px 12px;">›</button>
+    <span class="card-title">Agendamentos</span>
+    <span id="count" style="font-size:13px;color:var(--text-muted);"></span>
+  </div>
+  <div id="table-body"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-agend">
+  <div class="modal">
+    <h2 id="modal-title">Novo agendamento</h2>
+    <p>Preencha os dados do agendamento</p>
+    <input type="hidden" id="a-id">
+    <div class="form-group">
+      <label class="form-label">Paciente *</label>
+      <select class="form-control" id="a-paciente"><option value="">Selecionar paciente</option></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Data *</label><input class="form-control" id="a-data" type="date"></div>
+      <div class="form-group"><label class="form-label">Horário *</label><input class="form-control" id="a-hora" type="time"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Procedimento *</label>
+      <select class="form-control" id="a-proc"><option value="">Selecionar procedimento</option></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Profissional</label>
+        <select class="form-control" id="a-prof"><option value="">Selecionar</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-control" id="a-status"><option>Pendente</option><option>Confirmado</option><option>Concluído</option><option>Cancelado</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Valor (R$)</label><input class="form-control" id="a-valor" type="number" step="0.01" placeholder="0,00"></div>
+    <div class="form-group"><label class="form-label">Observações</label><textarea class="form-control" id="a-obs" rows="2" placeholder="Observações..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-agend')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarAgend()">Salvar</button>
     </div>
   </div>
-  <div class="card-body" style="padding:0;">
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);">
-      <div style="text-align:center;padding:10px 0;font-size:12px;font-weight:600;color:var(--text-muted);border-right:1px solid var(--border);">DOM</div><div style="text-align:center;padding:10px 0;font-size:12px;font-weight:600;color:var(--text-muted);border-right:1px solid var(--border);">SEG</div><div style="text-align:center;padding:10px 0;font-size:12px;font-weight:600;color:var(--text-muted);border-right:1px solid var(--border);">TER</div><div style="text-align:center;padding:10px 0;font-size:12px;font-weight:600;color:var(--text-muted);border-right:1px solid var(--border);">QUA</div><div style="text-align:center;padding:10px 0;font-size:12px;font-weight:600;color:var(--text-muted);border-right:1px solid var(--border);">QUI</div><div style="text-align:center;padding:10px 0;font-size:12px;font-weight:600;color:var(--text-muted);border-right:1px solid var(--border);">SEX</div><div style="text-align:center;padding:10px 0;font-size:12px;font-weight:600;color:var(--text-muted);border-right:1px solid var(--border);">SÁB</div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);min-height:400px;">
-      <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--cream);min-height:80px;"></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--cream);min-height:80px;"></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--cream);min-height:80px;"></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">1</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">2</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">3</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">4</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">5</div><div style="width:6px;height:6px;background:var(--copper);border-radius:50%;margin:4px auto 0;"></div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">6</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">7</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">8</div><div style="width:6px;height:6px;background:var(--copper);border-radius:50%;margin:4px auto 0;"></div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">9</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">10</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">11</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">12</div><div style="width:6px;height:6px;background:var(--copper);border-radius:50%;margin:4px auto 0;"></div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">13</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">14</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">15</div><div style="width:6px;height:6px;background:var(--copper);border-radius:50%;margin:4px auto 0;"></div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">16</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">17</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">18</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">19</div><div style="width:6px;height:6px;background:var(--copper);border-radius:50%;margin:4px auto 0;"></div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">20</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">21</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">22</div><div style="width:6px;height:6px;background:var(--copper);border-radius:50%;margin:4px auto 0;"></div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">23</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">24</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">25</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">26</div><div style="width:6px;height:6px;background:var(--copper);border-radius:50%;margin:4px auto 0;"></div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;background:var(--copper-dark);color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;">27</div><div style="width:6px;height:6px;background:var(--copper);border-radius:50%;margin:4px auto 0;"></div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">28</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">29</div><div style="width:6px;height:6px;background:var(--copper);border-radius:50%;margin:4px auto 0;"></div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">30</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px;min-height:80px;cursor:pointer;" onmouseover="this.style.background='var(--cream)'" onmouseout="this.style.background=''"><div style="font-size:13px;font-weight:500;">31</div></div><div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--cream);min-height:80px;"></div>
-    </div>
-  </div>
 </div>
-<div class="card">
-  <div class="card-header"><span class="card-title">Agendamentos de hoje — 27 de maio</span></div>
-  <div class="card-body" style="padding:0;">
-    <table>
-      <thead><tr><th>Horário</th><th>Paciente</th><th>Procedimento</th><th>Profissional</th><th>Status</th><th>Ações</th></tr></thead>
-      <tbody>
-        <tr><td>08:30</td><td>Maria Santos</td><td>Botox facial</td><td>Dra. Ana</td><td><span class="badge badge-neutral">Concluído</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver</button></td></tr>
-        <tr><td>10:00</td><td>Ana Costa</td><td>Preenchimento labial</td><td>Dra. Ana</td><td><span class="badge badge-success">Confirmado</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver</button></td></tr>
-        <tr><td>11:30</td><td>Juliana Lima</td><td>Limpeza de pele</td><td>Dra. Ana</td><td><span class="badge badge-success">Confirmado</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver</button></td></tr>
-        <tr><td>14:00</td><td>Fernanda Reis</td><td>Laser CO2</td><td>Dra. Ana</td><td><span class="badge badge-warning">Pendente</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver</button></td></tr>
-        <tr><td>15:30</td><td>Carla Mendes</td><td>Fio de PDO</td><td>Dra. Ana</td><td><span class="badge badge-success">Confirmado</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Ver</button></td></tr>
-      </tbody>
-    </table>
+
+<div class="confirm-dialog" id="confirm-dialog">
+  <div class="confirm-box">
+    <h3>Confirmar exclusão</h3>
+    <p id="confirm-msg">Tem certeza que deseja excluir?</p>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-primary" id="confirm-yes" style="background:var(--danger);">Excluir</button>
+    </div>
   </div>
 </div>
 </div>
 </div>
+<style>
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:32px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:modalIn 0.2s ease; }
+.modal.modal-lg { max-width:600px; }
+@keyframes modalIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; margin-bottom:6px; }
+.modal p { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:12px; font-weight:500; margin-bottom:5px; color:var(--text); }
+.form-control { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; background:#fff; transition:border-color 0.2s; }
+.form-control:focus { border-color:var(--copper); box-shadow:0 0 0 3px rgba(122,102,85,0.1); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:10px; margin-top:24px; }
+.modal-actions .btn { flex:1; padding:11px; justify-content:center; }
+.empty-state { padding:56px 22px; text-align:center; }
+.empty-icon { width:56px; height:56px; background:var(--copper-pale); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.empty-title { font-size:15px; font-weight:500; margin-bottom:6px; }
+.empty-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-dialog { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center; }
+.confirm-dialog.open { display:flex; }
+.confirm-box { background:#fff; border-radius:16px; padding:28px; max-width:360px; width:90%; text-align:center; }
+.confirm-box h3 { font-size:17px; font-weight:600; margin-bottom:8px; }
+.confirm-box p { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-btns { display:flex; gap:10px; }
+.confirm-btns .btn { flex:1; }
+</style><script>
+// ── SHARED DATA LAYER ──
+const DB = {
+  get: k => JSON.parse(localStorage.getItem('clivia_'+k)||'[]'),
+  set: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  getObj: (k,d={}) => JSON.parse(localStorage.getItem('clivia_'+k)||JSON.stringify(d)),
+  setObj: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  nextId: k => { const d=DB.get(k); return d.length ? Math.max(...d.map(x=>x.id||0))+1 : 1; }
+};
+
+// Modal helpers
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openConfirm(msg, onYes){
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-yes').onclick = function(){ closeConfirm(); onYes(); };
+}
+function closeConfirm(){ document.getElementById('confirm-dialog').classList.remove('open'); }
+
+// Toast notification
+function toast(msg, type='success'){
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;background:'+(type==='success'?'#2D6A4F':type==='error'?'#C0392B':'#2E2218')+';box-shadow:0 4px 20px rgba(0,0,0,0.15);animation:fadeUp 0.3s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+function abrirNovoAgend(){
+  limparAgend();
+  carregarSelects();
+  // default date = today
+  document.getElementById('a-data').value = new Date().toISOString().split('T')[0];
+  openModal('modal-agend');
+}
+
+function carregarSelects(){
+  const pacientes = DB.get('pacientes');
+  const procs = DB.get('procedimentos');
+  const profs = DB.get('profissionais');
+  document.getElementById('a-paciente').innerHTML = '<option value="">Selecionar paciente</option>' + pacientes.map(p=>`<option value="${p.id}">${p.nome}</option>`).join('');
+  document.getElementById('a-proc').innerHTML = '<option value="">Selecionar procedimento</option>' + procs.map(p=>`<option value="${p.nome}">${p.nome}${p.valor?' — R$'+p.valor:''}</option>`).join('');
+  document.getElementById('a-prof').innerHTML = '<option value="">Selecionar</option>' + profs.map(p=>`<option value="${p.nome}">${p.nome}</option>`).join('');
+}
+
+function render(){
+  const dataFiltro = document.getElementById('filtro-data').value;
+  const statusFiltro = document.getElementById('filtro-status').value;
+  let ags = DB.get('agendamentos');
+  if(dataFiltro) ags = ags.filter(a=>a.data===dataFiltro);
+  if(statusFiltro) ags = ags.filter(a=>a.status===statusFiltro);
+  ags.sort((a,b)=>a.data>b.data?1:a.data<b.data?-1:a.hora>b.hora?1:-1);
+  document.getElementById('count').textContent = ags.length + ' agendamento'+(ags.length!==1?'s':'');
+  const body = document.getElementById('table-body');
+  if(!ags.length){ body.innerHTML='<div class="empty-state"><div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="empty-title">Nenhum agendamento</div><div class="empty-desc">Clique em "+ Novo agendamento" para adicionar.</div><button class="btn btn-primary" onclick="abrirNovoAgend()">+ Novo agendamento</button></div>'; return; }
+  const statusClass = {Confirmado:'badge-success',Pendente:'badge-warning',Concluído:'badge-neutral',Cancelado:'badge-danger'};
+  body.innerHTML='<table><thead><tr><th>Data</th><th>Horário</th><th>Paciente</th><th>Procedimento</th><th>Profissional</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead><tbody>'+ags.map(a=>{
+    const pac = DB.get('pacientes').find(p=>p.id===parseInt(a.pacienteId));
+    const dt = a.data ? new Date(a.data+'T12:00:00').toLocaleDateString('pt-BR') : '—';
+    return `<tr><td>${dt}</td><td>${a.hora||'—'}</td><td><div style="font-weight:500;">${pac?pac.nome:a.pacienteNome||'—'}</div></td><td>${a.proc||'—'}</td><td>${a.prof||'—'}</td><td>${a.valor?'R$'+parseFloat(a.valor).toFixed(2).replace('.',','):'—'}</td><td><span class="badge ${statusClass[a.status]||'badge-neutral'}">${a.status}</span></td><td style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;" onclick="editarAgend(${a.id})">Editar</button><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;color:var(--danger);border-color:rgba(192,57,43,0.3);" onclick="excluirAgend(${a.id})">Excluir</button></td></tr>`;
+  }).join('')+'</tbody></table>';
+}
+
+function salvarAgend(){
+  const pacienteId = document.getElementById('a-paciente').value;
+  const data = document.getElementById('a-data').value;
+  const hora = document.getElementById('a-hora').value;
+  const proc = document.getElementById('a-proc').value;
+  if(!pacienteId||!data||!hora){toast('Preencha paciente, data e horário','error');return;}
+  const id = document.getElementById('a-id').value;
+  const ags = DB.get('agendamentos');
+  const pac = DB.get('pacientes').find(p=>p.id===parseInt(pacienteId));
+  const obj = {id:id?parseInt(id):DB.nextId('agendamentos'),pacienteId:parseInt(pacienteId),pacienteNome:pac?pac.nome:'',data,hora,proc,prof:document.getElementById('a-prof').value,status:document.getElementById('a-status').value,valor:document.getElementById('a-valor').value,obs:document.getElementById('a-obs').value};
+  if(id){ const i=ags.findIndex(a=>a.id===parseInt(id)); ags[i]=obj; } else { ags.push(obj); }
+  DB.set('agendamentos',ags);
+  closeModal('modal-agend');
+  toast(id?'Agendamento atualizado!':'Agendamento criado!');
+  render();
+}
+
+function editarAgend(id){
+  const a = DB.get('agendamentos').find(x=>x.id===id);
+  carregarSelects();
+  document.getElementById('modal-title').textContent='Editar agendamento';
+  document.getElementById('a-id').value=a.id;
+  document.getElementById('a-paciente').value=a.pacienteId||'';
+  document.getElementById('a-data').value=a.data||'';
+  document.getElementById('a-hora').value=a.hora||'';
+  document.getElementById('a-proc').value=a.proc||'';
+  document.getElementById('a-prof').value=a.prof||'';
+  document.getElementById('a-status').value=a.status||'Pendente';
+  document.getElementById('a-valor').value=a.valor||'';
+  document.getElementById('a-obs').value=a.obs||'';
+  openModal('modal-agend');
+}
+
+function excluirAgend(id){
+  openConfirm('Excluir este agendamento?',()=>{
+    DB.set('agendamentos',DB.get('agendamentos').filter(a=>a.id!==id));
+    toast('Agendamento excluído.','error'); render();
+  });
+}
+
+function limparAgend(){
+  ['a-id','a-data','a-hora','a-valor','a-obs'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('a-status').value='Pendente';
+  document.getElementById('modal-title').textContent='Novo agendamento';
+}
+
+document.getElementById('filtro-data').addEventListener('change',render);
+document.getElementById('filtro-status').addEventListener('change',render);
+document.getElementById('modal-agend').addEventListener('click',function(e){if(e.target===this)closeModal('modal-agend');});
+render();
+</script>
 </body>
 </html>

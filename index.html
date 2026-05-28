@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -237,7 +238,7 @@ footer p { font-size:13px; color:rgba(255,255,255,0.35); }
 
   
   
-  #smoke-canvas + * { position: relative; z-index: 1; }
+  
   nav, section, footer { position: relative; z-index: 1; }
 </style>
 </head>
@@ -683,66 +684,10 @@ document.querySelectorAll('.stats-grid').forEach(el => counterObserver.observe(e
 
 
 </div>
-<script>
-(function(){
-  var c = document.getElementById('smoke-canvas');
-  var ctx = c.getContext('2d');
 
-  function setSize(){
-    c.width = c.parentElement.offsetWidth;
-    c.height = c.parentElement.offsetHeight;
-  }
-  setSize();
-  window.addEventListener('resize', setSize);
 
-  var blobs = [];
-  for(var i = 0; i < 8; i++){
-    blobs.push({
-      x: Math.random() * c.width,
-      y: Math.random() * c.height,
-      rx: 120 + Math.random() * 200,
-      ry: 80 + Math.random() * 140,
-      vx: (Math.random()-0.5) * 0.35,
-      vy: (Math.random()-0.5) * 0.18,
-      alpha: 0.13 + Math.random() * 0.15,
-      angle: Math.random() * Math.PI * 2,
-      va: (Math.random()-0.5) * 0.003
-    });
-  }
 
-  function draw(){
-    var W = c.width, H = c.height;
-    ctx.clearRect(0, 0, W, H);
 
-    blobs.forEach(function(b){
-      ctx.save();
-      ctx.translate(b.x, b.y);
-      ctx.rotate(b.angle);
-      ctx.scale(1, b.ry/b.rx);
-      var g = ctx.createRadialGradient(0,0,0,0,0,b.rx);
-      g.addColorStop(0,   'rgba(101,67,40,' + b.alpha + ')');
-      g.addColorStop(0.45,'rgba(101,67,40,' + (b.alpha*0.5) + ')');
-      g.addColorStop(1,   'rgba(101,67,40,0)');
-      ctx.beginPath();
-      ctx.arc(0, 0, b.rx, 0, Math.PI*2);
-      ctx.fillStyle = g;
-      ctx.fill();
-      ctx.restore();
-
-      b.x += b.vx; b.y += b.vy; b.angle += b.va;
-      var W2 = c.width, H2 = c.height;
-      if(b.x < -250) b.x = W2+250;
-      if(b.x > W2+250) b.x = -250;
-      if(b.y < -250) b.y = H2+250;
-      if(b.y > H2+250) b.y = -250;
-    });
-
-    requestAnimationFrame(draw);
-  }
-
-  draw();
-})();
-</script>
 
 
 
@@ -762,59 +707,43 @@ document.querySelectorAll('.stats-grid').forEach(el => counterObserver.observe(e
   resize();
   window.addEventListener('resize', resize);
 
-  var blobs = [];
-  function initBlobs(){
-    blobs = [];
-    for(var i = 0; i < 8; i++){
-      blobs.push({
-        x: Math.random() * cv.width,
-        y: Math.random() * cv.height,
-        rx: 150 + Math.random() * 200,
-        ry: 100 + Math.random() * 140,
-        vx: (Math.random() > 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.5),
-        vy: (Math.random() > 0.5 ? 1 : -1) * (0.15 + Math.random() * 0.25),
-        alpha: 0.2 + Math.random() * 0.2,
-        angle: Math.random() * Math.PI * 2,
-        va: (Math.random() > 0.5 ? 1 : -1) * 0.002
-      });
-    }
+  var particles = [];
+  for(var i = 0; i < 42; i++){
+    particles.push({
+      x: Math.random() * cv.width,
+      y: Math.random() * cv.height,
+      r: 0.8 + Math.random() * 1.8,
+      vx: (Math.random()-0.5) * 0.35,
+      vy: (Math.random()-0.5) * 0.2,
+      alpha: 0.07 + Math.random() * 0.18,
+      pulse: Math.random() * Math.PI * 2,
+      ps: 0.007 + Math.random() * 0.01,
+      wx: Math.random() * Math.PI * 2,
+      wy: Math.random() * Math.PI * 2,
+      ws: 0.003 + Math.random() * 0.005
+    });
   }
-  initBlobs();
 
-  var raf;
   function draw(){
     var W = cv.width, H = cv.height;
     ctx.clearRect(0, 0, W, H);
-
-    for(var i = 0; i < blobs.length; i++){
-      var b = blobs[i];
-      ctx.save();
-      ctx.translate(b.x, b.y);
-      ctx.rotate(b.angle);
-      ctx.scale(1, b.ry / b.rx);
-      var g = ctx.createRadialGradient(0, 0, 0, 0, 0, b.rx);
-      g.addColorStop(0,    'rgba(101,67,40,' + b.alpha + ')');
-      g.addColorStop(0.45, 'rgba(101,67,40,' + (b.alpha * 0.45) + ')');
-      g.addColorStop(1,    'rgba(101,67,40,0)');
+    particles.forEach(function(p){
+      p.pulse += p.ps;
+      p.wx += p.ws; p.wy += p.ws * 0.7;
+      p.x += p.vx + Math.sin(p.wx) * 0.3;
+      p.y += p.vy + Math.cos(p.wy) * 0.18;
+      if(p.x < -10) p.x = W+10;
+      if(p.x > W+10) p.x = -10;
+      if(p.y < -10) p.y = H+10;
+      if(p.y > H+10) p.y = -10;
+      var a = p.alpha * (0.5 + 0.5 * Math.sin(p.pulse));
       ctx.beginPath();
-      ctx.arc(0, 0, b.rx, 0, Math.PI * 2);
-      ctx.fillStyle = g;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(101,67,40,' + a + ')';
       ctx.fill();
-      ctx.restore();
-
-      b.x += b.vx;
-      b.y += b.vy;
-      b.angle += b.va;
-
-      if(b.x < -300) b.x = W + 300;
-      if(b.x > W + 300) b.x = -300;
-      if(b.y < -300) b.y = H + 300;
-      if(b.y > H + 300) b.y = -300;
-    }
-
-    raf = requestAnimationFrame(draw);
+    });
+    requestAnimationFrame(draw);
   }
-
   draw();
 })();
 </script>

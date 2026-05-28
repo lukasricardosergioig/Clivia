@@ -88,68 +88,112 @@ tr:hover td { background:var(--cream); }
 </aside>
 <div class="main">
   <header class="topbar">
-    <div><h1>Lista de reativação</h1><p>Pacientes que não retornam há 30+ dias</p></div>
+    <div><h1>Lista de reativação</h1><p>Pacientes calculados automaticamente pelo histórico de atendimentos</p></div>
     <div class="topbar-right"></div>
   </header>
   <div class="content">
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Sem visita +30 dias</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--warning);">5</div></div></div>
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Contatados este mês</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--success);">8</div></div></div>
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Retornaram</div><div style="font-family:'DM Serif Display',serif;font-size:28px;">3</div></div></div>
+<div id="metrics" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;"></div>
+<div style="display:flex;gap:8px;margin-bottom:16px;">
+  <button class="btn btn-outline" onclick="setDias(30)">30+ dias</button>
+  <button class="btn btn-outline" onclick="setDias(60)">60+ dias</button>
+  <button class="btn btn-outline" onclick="setDias(90)">90+ dias</button>
 </div>
 <div class="card">
-  <div class="card-header">
-    <span class="card-title">Pacientes para reativar</span>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-outline" style="font-size:12px;padding:6px 12px;">30+ dias</button>
-      <button class="btn btn-outline" style="font-size:12px;padding:6px 12px;">60+ dias</button>
-      <button class="btn btn-outline" style="font-size:12px;padding:6px 12px;">90+ dias</button>
-    </div>
-  </div>
-  <div style="padding:0;">
-    <table>
-      <thead><tr><th>Paciente</th><th>Último atendimento</th><th>Dias ausente</th><th>Último procedimento</th><th>Telefone</th><th>Status</th></tr></thead>
-      <tbody>
-        <tr>
-          <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--copper);">PS</div><div style="font-weight:500;">Paula Silva</div></div></td>
-          <td>20/03/2026</td><td><span style="font-weight:600;color:var(--danger);">68 dias</span></td><td>Botox</td><td>(51) 99999-3456</td>
-          <td><button class="btn btn-outline" style="padding:5px 12px;font-size:11px;" onclick="marcarContatado(this)">Marcar contatado</button></td>
-        </tr>
-        <tr>
-          <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--copper);">RO</div><div style="font-weight:500;">Roberto Oliveira</div></div></td>
-          <td>03/04/2026</td><td><span style="font-weight:600;color:var(--danger);">55 dias</span></td><td>Laser</td><td>(51) 99999-7890</td>
-          <td><button class="btn btn-outline" style="padding:5px 12px;font-size:11px;" onclick="marcarContatado(this)">Marcar contatado</button></td>
-        </tr>
-        <tr>
-          <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--copper);">BM</div><div style="font-weight:500;">Beatriz Moura</div></div></td>
-          <td>11/04/2026</td><td><span style="font-weight:600;color:var(--warning);">47 dias</span></td><td>Peeling</td><td>(51) 99999-6789</td>
-          <td><button class="btn btn-outline" style="padding:5px 12px;font-size:11px;" onclick="marcarContatado(this)">Marcar contatado</button></td>
-        </tr>
-        <tr>
-          <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--copper);">TC</div><div style="font-weight:500;">Tâmara Castro</div></div></td>
-          <td>19/04/2026</td><td><span style="font-weight:600;color:var(--warning);">39 dias</span></td><td>Limpeza de pele</td><td>(51) 99999-0123</td>
-          <td><button class="btn btn-outline" style="padding:5px 12px;font-size:11px;" onclick="marcarContatado(this)">Marcar contatado</button></td>
-        </tr>
-        <tr>
-          <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--copper);">KS</div><div style="font-weight:500;">Kátia Souza</div></div></td>
-          <td>27/04/2026</td><td><span style="font-weight:600;color:var(--warning);">31 dias</span></td><td>Vitamina C</td><td>(51) 99999-4567</td>
-          <td><button class="btn btn-outline" style="padding:5px 12px;font-size:11px;" onclick="marcarContatado(this)">Marcar contatado</button></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <div class="card-header"><span class="card-title">Pacientes para reativar</span><span id="count" style="font-size:13px;color:var(--text-muted);"></span></div>
+  <div id="table-body"></div>
 </div>
-<script>
-function marcarContatado(btn){
-  btn.textContent='✓ Contatado';
-  btn.style.background='rgba(45,106,79,0.1)';
-  btn.style.color='var(--success)';
-  btn.style.borderColor='rgba(45,106,79,0.2)';
-  btn.disabled=true;
-  btn.closest('tr').style.opacity='0.5';
+</div>
+</div>
+<style>
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:32px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:modalIn 0.2s ease; }
+.modal.modal-lg { max-width:600px; }
+@keyframes modalIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; margin-bottom:6px; }
+.modal p { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:12px; font-weight:500; margin-bottom:5px; color:var(--text); }
+.form-control { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; background:#fff; transition:border-color 0.2s; }
+.form-control:focus { border-color:var(--copper); box-shadow:0 0 0 3px rgba(122,102,85,0.1); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:10px; margin-top:24px; }
+.modal-actions .btn { flex:1; padding:11px; justify-content:center; }
+.empty-state { padding:56px 22px; text-align:center; }
+.empty-icon { width:56px; height:56px; background:var(--copper-pale); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.empty-title { font-size:15px; font-weight:500; margin-bottom:6px; }
+.empty-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-dialog { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center; }
+.confirm-dialog.open { display:flex; }
+.confirm-box { background:#fff; border-radius:16px; padding:28px; max-width:360px; width:90%; text-align:center; }
+.confirm-box h3 { font-size:17px; font-weight:600; margin-bottom:8px; }
+.confirm-box p { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-btns { display:flex; gap:10px; }
+.confirm-btns .btn { flex:1; }
+</style><script>
+// ── SHARED DATA LAYER ──
+const DB = {
+  get: k => JSON.parse(localStorage.getItem('clivia_'+k)||'[]'),
+  set: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  getObj: (k,d={}) => JSON.parse(localStorage.getItem('clivia_'+k)||JSON.stringify(d)),
+  setObj: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  nextId: k => { const d=DB.get(k); return d.length ? Math.max(...d.map(x=>x.id||0))+1 : 1; }
+};
+
+// Modal helpers
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openConfirm(msg, onYes){
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-yes').onclick = function(){ closeConfirm(); onYes(); };
 }
+function closeConfirm(){ document.getElementById('confirm-dialog').classList.remove('open'); }
+
+// Toast notification
+function toast(msg, type='success'){
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;background:'+(type==='success'?'#2D6A4F':type==='error'?'#C0392B':'#2E2218')+';box-shadow:0 4px 20px rgba(0,0,0,0.15);animation:fadeUp 0.3s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+let diasFiltro=30;
+function setDias(d){ diasFiltro=d; render(); }
+
+function render(){
+  const pacientes=DB.get('pacientes');
+  const hoje=new Date();
+  const lista=[];
+  pacientes.forEach(p=>{
+    const evols=DB.get('evolucoes_'+p.id);
+    if(!evols.length) return;
+    const ultima=evols.reduce((a,b)=>a.data>b.data?a:b);
+    const dt=new Date(ultima.data+'T12:00:00');
+    const dias=Math.floor((hoje-dt)/86400000);
+    if(dias>=diasFiltro) lista.push({...p,dias,ultimaData:ultima.data,ultimaProc:ultima.proc});
+  });
+  lista.sort((a,b)=>b.dias-a.dias);
+
+  const total30=pacientes.filter(p=>{const e=DB.get('evolucoes_'+p.id);if(!e.length)return false;const u=e.reduce((a,b)=>a.data>b.data?a:b);return Math.floor((hoje-new Date(u.data+'T12:00:00'))/86400000)>=30;}).length;
+  document.getElementById('metrics').innerHTML=`
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Inativos 30+ dias</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:${total30>0?'var(--warning)':'var(--success)'};">${total30}</div></div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Total pacientes</div><div style="font-family:'DM Serif Display',serif;font-size:28px;">${pacientes.length}</div></div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Exibindo filtro</div><div style="font-family:'DM Serif Display',serif;font-size:28px;">${diasFiltro}+ dias</div></div>
+  `;
+  document.getElementById('count').textContent=lista.length+' paciente'+(lista.length!==1?'s':'');
+  const body=document.getElementById('table-body');
+  if(!lista.length){body.innerHTML='<div class="empty-state"><div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.85 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div class="empty-title">Nenhum paciente inativo</div><div class="empty-desc">Todos os pacientes retornaram nos últimos '+diasFiltro+' dias.</div></div>';return;}
+  body.innerHTML='<table><thead><tr><th>Paciente</th><th>Telefone</th><th>Último atendimento</th><th>Dias ausente</th><th>Último procedimento</th><th>Ação</th></tr></thead><tbody>'+lista.map(p=>{
+    const cor=p.dias>=60?'var(--danger)':p.dias>=30?'var(--warning)':'var(--text)';
+    const dt=new Date(p.ultimaData+'T12:00:00').toLocaleDateString('pt-BR');
+    return `<tr><td style="font-weight:500;">${p.nome}</td><td>${p.tel||'—'}</td><td>${dt}</td><td style="font-weight:600;color:${cor};">${p.dias} dias</td><td>${p.ultimaProc||'—'}</td><td><button class="btn btn-outline" style="padding:5px 12px;font-size:11px;" onclick="marcarContatado(this)">Marcar contatado</button></td></tr>`;
+  }).join('')+'</tbody></table>';
+}
+function marcarContatado(btn){btn.textContent='✓ Contatado';btn.style.background='rgba(45,106,79,0.1)';btn.style.color='var(--success)';btn.style.borderColor='rgba(45,106,79,0.2)';btn.disabled=true;btn.closest('tr').style.opacity='0.5';}
+render();
 </script>
-</div>
-</div>
 </body>
 </html>

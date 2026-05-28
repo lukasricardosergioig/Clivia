@@ -95,92 +95,281 @@ tr:hover td { background:var(--cream); }
 <div style="display:grid;grid-template-columns:220px 1fr;gap:24px;">
   <div class="card" style="height:fit-content;">
     <div class="card-body" style="padding:8px;">
-      <div id="tab-clinica" class="config-tab active-tab" style="padding:10px 12px;border-radius:8px;background:var(--copper-pale);cursor:pointer;margin-bottom:4px;font-size:13px;font-weight:500;color:var(--copper-dark);" onclick="showTab('clinica')">Dados da clínica</div>
-      <div id="tab-profissionais" class="config-tab" style="padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;font-size:13px;color:var(--text-muted);" onclick="showTab('profissionais')">Profissionais</div>
-      <div id="tab-procedimentos" class="config-tab" style="padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;font-size:13px;color:var(--text-muted);" onclick="showTab('procedimentos')">Procedimentos</div>
-      <div id="tab-conta" class="config-tab" style="padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;font-size:13px;color:var(--text-muted);" onclick="showTab('conta')">Minha conta</div>
-      <div id="tab-assinatura" class="config-tab" style="padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text-muted);" onclick="showTab('assinatura')">Assinatura</div>
+      <div class="config-tab" id="tab-clinica" style="padding:10px 12px;border-radius:8px;background:var(--copper-pale);cursor:pointer;margin-bottom:4px;font-size:13px;font-weight:500;color:var(--copper-dark);" onclick="showTab('clinica')">Dados da clínica</div>
+      <div class="config-tab" id="tab-profissionais" style="padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;font-size:13px;color:var(--text-muted);" onclick="showTab('profissionais')">Profissionais</div>
+      <div class="config-tab" id="tab-procedimentos" style="padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:4px;font-size:13px;color:var(--text-muted);" onclick="showTab('procedimentos')">Procedimentos</div>
+      <div class="config-tab" id="tab-conta" style="padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text-muted);" onclick="showTab('conta')">Minha conta</div>
     </div>
   </div>
   <div>
+    <!-- CLÍNICA -->
     <div id="panel-clinica" class="card">
-      <div class="card-header"><span class="card-title">Dados da clínica</span><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">Salvar</button></div>
+      <div class="card-header"><span class="card-title">Dados da clínica</span><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;" onclick="salvarClinica()">Salvar</button></div>
       <div class="card-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-          <div><label style="font-size:12px;font-weight:500;display:block;margin-bottom:5px;">Nome da clínica</label><input style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;" value="Clínica Estética Ana Silva"></div>
-          <div><label style="font-size:12px;font-weight:500;display:block;margin-bottom:5px;">CNPJ</label><input style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;" value="12.345.678/0001-99"></div>
-          <div><label style="font-size:12px;font-weight:500;display:block;margin-bottom:5px;">Telefone</label><input style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;" value="(51) 3333-4444"></div>
-          <div><label style="font-size:12px;font-weight:500;display:block;margin-bottom:5px;">Email</label><input style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;" value="contato@clinica.com.br"></div>
-          <div style="grid-column:1/-1;"><label style="font-size:12px;font-weight:500;display:block;margin-bottom:5px;">Endereço</label><input style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;" value="Rua das Flores, 123 — Porto Alegre/RS"></div>
+          <div class="form-group"><label class="form-label">Nome da clínica *</label><input class="form-control" id="c-nome" placeholder="Nome da sua clínica"></div>
+          <div class="form-group"><label class="form-label">CNPJ / CPF</label><input class="form-control" id="c-doc" placeholder="00.000.000/0001-00"></div>
+          <div class="form-group"><label class="form-label">Telefone</label><input class="form-control" id="c-tel" placeholder="(51) 99999-9999"></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-control" id="c-email" placeholder="contato@clinica.com"></div>
+          <div class="form-group" style="grid-column:1/-1;"><label class="form-label">Endereço</label><input class="form-control" id="c-end" placeholder="Rua, número, cidade"></div>
         </div>
       </div>
     </div>
+
+    <!-- PROFISSIONAIS -->
     <div id="panel-profissionais" class="card" style="display:none;">
-      <div class="card-header"><span class="card-title">Profissionais</span><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Novo profissional</button></div>
-      <div style="padding:0;">
-        <table>
-          <thead><tr><th>Nome</th><th>Função</th><th>Comissão</th><th>Status</th><th>Ações</th></tr></thead>
-          <tbody>
-            <tr><td><div style="font-weight:500;">Dra. Ana Silva</div></td><td>Médica esteta</td><td>15%</td><td><span class="badge badge-success">Ativo</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-            <tr><td><div style="font-weight:500;">Camila Rocha</div></td><td>Esteticista</td><td>20%</td><td><span class="badge badge-success">Ativo</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-            <tr><td><div style="font-weight:500;">Larissa Mota</div></td><td>Enfermeira</td><td>10%</td><td><span class="badge badge-success">Ativo</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="card-header"><span class="card-title">Profissionais</span><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;" onclick="openModal('modal-prof')">+ Novo profissional</button></div>
+      <div id="prof-body"></div>
     </div>
+
+    <!-- PROCEDIMENTOS -->
     <div id="panel-procedimentos" class="card" style="display:none;">
-      <div class="card-header"><span class="card-title">Procedimentos cadastrados</span><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Novo procedimento</button></div>
-      <div style="padding:0;">
-        <table>
-          <thead><tr><th>Procedimento</th><th>Valor padrão</th><th>Retorno em</th><th>Ações</th></tr></thead>
-          <tbody>
-            <tr><td>Botox facial</td><td>R$ 450,00</td><td>15 dias</td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-            <tr><td>Preenchimento labial</td><td>R$ 680,00</td><td>30 dias</td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-            <tr><td>Laser CO2</td><td>R$ 890,00</td><td>21 dias</td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-            <tr><td>Limpeza de pele</td><td>R$ 280,00</td><td>—</td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-            <tr><td>Fio de PDO</td><td>R$ 1.200,00</td><td>45 dias</td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="card-header"><span class="card-title">Procedimentos</span><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;" onclick="openModal('modal-proc')">+ Novo procedimento</button></div>
+      <div id="proc-body"></div>
     </div>
+
+    <!-- CONTA -->
     <div id="panel-conta" class="card" style="display:none;">
-      <div class="card-header"><span class="card-title">Minha conta</span><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">Salvar</button></div>
+      <div class="card-header"><span class="card-title">Minha conta</span><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;" onclick="salvarConta()">Salvar</button></div>
       <div class="card-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-          <div><label style="font-size:12px;font-weight:500;display:block;margin-bottom:5px;">Nome</label><input style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;" value="Dra. Ana Silva"></div>
-          <div><label style="font-size:12px;font-weight:500;display:block;margin-bottom:5px;">Email</label><input style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;" value="ana@clinica.com.br"></div>
-          <div><label style="font-size:12px;font-weight:500;display:block;margin-bottom:5px;">Nova senha</label><input type="password" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;" placeholder="••••••••"></div>
-          <div><label style="font-size:12px;font-weight:500;display:block;margin-bottom:5px;">Confirmar senha</label><input type="password" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;" placeholder="••••••••"></div>
-        </div>
-      </div>
-    </div>
-    <div id="panel-assinatura" class="card" style="display:none;">
-      <div class="card-header"><span class="card-title">Assinatura</span></div>
-      <div class="card-body">
-        <div style="background:var(--copper-pale);border-radius:12px;padding:20px;margin-bottom:20px;">
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Plano atual</div>
-          <div style="font-size:20px;font-weight:600;margin-bottom:4px;">Plano Completo · R$97,90/mês</div>
-          <div style="font-size:13px;color:var(--text-muted);">Próxima cobrança: 27/06/2026 · Cartão final 4242</div>
-        </div>
-        <div style="display:flex;gap:10px;">
-          <button class="btn btn-outline" onclick="alert('Gerenciar pagamento')">Atualizar forma de pagamento</button>
-          <button class="btn btn-outline" style="color:var(--danger);border-color:rgba(192,57,43,0.3);" onclick="alert('Tem certeza?')">Cancelar assinatura</button>
+          <div class="form-group"><label class="form-label">Nome</label><input class="form-control" id="u-nome" placeholder="Seu nome"></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-control" id="u-email" placeholder="seu@email.com"></div>
+          <div class="form-group"><label class="form-label">Nova senha</label><input class="form-control" id="u-senha" type="password" placeholder="••••••••"></div>
+          <div class="form-group"><label class="form-label">Confirmar senha</label><input class="form-control" id="u-conf" type="password" placeholder="••••••••"></div>
         </div>
       </div>
     </div>
   </div>
 </div>
-<script>
+
+<!-- Modal profissional -->
+<div class="modal-overlay" id="modal-prof">
+  <div class="modal">
+    <h2 id="prof-modal-title">Novo profissional</h2>
+    <p>Cadastre um membro da equipe</p>
+    <input type="hidden" id="pf-id">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nome *</label><input class="form-control" id="pf-nome" placeholder="Nome completo"></div>
+      <div class="form-group"><label class="form-label">Função</label><input class="form-control" id="pf-funcao" placeholder="Ex: Médica esteta"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Email</label><input class="form-control" id="pf-email" placeholder="email@clinica.com"></div>
+      <div class="form-group"><label class="form-label">Comissão (%)</label><input class="form-control" id="pf-com" type="number" min="0" max="100" placeholder="0"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-prof')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarProf()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal procedimento -->
+<div class="modal-overlay" id="modal-proc">
+  <div class="modal">
+    <h2 id="proc-modal-title">Novo procedimento</h2>
+    <p>Cadastre um procedimento oferecido</p>
+    <input type="hidden" id="pr-id">
+    <div class="form-group"><label class="form-label">Nome *</label><input class="form-control" id="pr-nome" placeholder="Ex: Botox facial"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Valor padrão (R$)</label><input class="form-control" id="pr-valor" type="number" step="0.01" placeholder="0,00"></div>
+      <div class="form-group"><label class="form-label">Retorno em (dias)</label><input class="form-control" id="pr-retorno" type="number" min="0" placeholder="Ex: 15"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Descrição</label><textarea class="form-control" id="pr-desc" rows="2" placeholder="Descrição do procedimento..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-proc')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarProc()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="confirm-dialog" id="confirm-dialog">
+  <div class="confirm-box">
+    <h3>Confirmar exclusão</h3>
+    <p id="confirm-msg">Tem certeza que deseja excluir?</p>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-primary" id="confirm-yes" style="background:var(--danger);">Excluir</button>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<style>
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:32px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:modalIn 0.2s ease; }
+.modal.modal-lg { max-width:600px; }
+@keyframes modalIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; margin-bottom:6px; }
+.modal p { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:12px; font-weight:500; margin-bottom:5px; color:var(--text); }
+.form-control { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; background:#fff; transition:border-color 0.2s; }
+.form-control:focus { border-color:var(--copper); box-shadow:0 0 0 3px rgba(122,102,85,0.1); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:10px; margin-top:24px; }
+.modal-actions .btn { flex:1; padding:11px; justify-content:center; }
+.empty-state { padding:56px 22px; text-align:center; }
+.empty-icon { width:56px; height:56px; background:var(--copper-pale); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.empty-title { font-size:15px; font-weight:500; margin-bottom:6px; }
+.empty-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-dialog { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center; }
+.confirm-dialog.open { display:flex; }
+.confirm-box { background:#fff; border-radius:16px; padding:28px; max-width:360px; width:90%; text-align:center; }
+.confirm-box h3 { font-size:17px; font-weight:600; margin-bottom:8px; }
+.confirm-box p { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-btns { display:flex; gap:10px; }
+.confirm-btns .btn { flex:1; }
+</style><script>
+// ── SHARED DATA LAYER ──
+const DB = {
+  get: k => JSON.parse(localStorage.getItem('clivia_'+k)||'[]'),
+  set: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  getObj: (k,d={}) => JSON.parse(localStorage.getItem('clivia_'+k)||JSON.stringify(d)),
+  setObj: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  nextId: k => { const d=DB.get(k); return d.length ? Math.max(...d.map(x=>x.id||0))+1 : 1; }
+};
+
+// Modal helpers
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openConfirm(msg, onYes){
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-yes').onclick = function(){ closeConfirm(); onYes(); };
+}
+function closeConfirm(){ document.getElementById('confirm-dialog').classList.remove('open'); }
+
+// Toast notification
+function toast(msg, type='success'){
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;background:'+(type==='success'?'#2D6A4F':type==='error'?'#C0392B':'#2E2218')+';box-shadow:0 4px 20px rgba(0,0,0,0.15);animation:fadeUp 0.3s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
 function showTab(tab){
-  ['clinica','profissionais','procedimentos','conta','assinatura'].forEach(function(t){
+  ['clinica','profissionais','procedimentos','conta'].forEach(t=>{
     document.getElementById('panel-'+t).style.display = t===tab?'block':'none';
-    var el=document.getElementById('tab-'+t);
-    if(t===tab){ el.style.background='var(--copper-pale)'; el.style.color='var(--copper-dark)'; el.style.fontWeight='500'; }
-    else { el.style.background=''; el.style.color='var(--text-muted)'; el.style.fontWeight='400'; }
+    const el=document.getElementById('tab-'+t);
+    if(t===tab){el.style.background='var(--copper-pale)';el.style.color='var(--copper-dark)';el.style.fontWeight='500';}
+    else{el.style.background='';el.style.color='var(--text-muted)';el.style.fontWeight='400';}
+  });
+  if(tab==='profissionais') renderProfs();
+  if(tab==='procedimentos') renderProcs();
+}
+
+// CLINICA
+function carregarClinica(){
+  const c=DB.getObj('config_clinica');
+  document.getElementById('c-nome').value=c.nome||'';
+  document.getElementById('c-doc').value=c.doc||'';
+  document.getElementById('c-tel').value=c.tel||'';
+  document.getElementById('c-email').value=c.email||'';
+  document.getElementById('c-end').value=c.end||'';
+}
+function salvarClinica(){
+  DB.setObj('config_clinica',{nome:document.getElementById('c-nome').value,doc:document.getElementById('c-doc').value,tel:document.getElementById('c-tel').value,email:document.getElementById('c-email').value,end:document.getElementById('c-end').value});
+  toast('Dados da clínica salvos!');
+}
+
+// CONTA
+function salvarConta(){
+  const nome=document.getElementById('u-nome').value;
+  const email=document.getElementById('u-email').value;
+  const senha=document.getElementById('u-senha').value;
+  const conf=document.getElementById('u-conf').value;
+  if(senha&&senha!==conf){toast('Senhas não coincidem','error');return;}
+  DB.setObj('config_conta',{nome,email});
+  toast('Conta atualizada!');
+}
+
+// PROFISSIONAIS
+function renderProfs(){
+  const profs=DB.get('profissionais');
+  const body=document.getElementById('prof-body');
+  if(!profs.length){body.innerHTML='<div class="empty-state"><div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="empty-title">Nenhum profissional cadastrado</div><div class="empty-desc">Adicione os membros da sua equipe.</div></div>';return;}
+  body.innerHTML='<table><thead><tr><th>Nome</th><th>Função</th><th>Email</th><th>Comissão</th><th>Ações</th></tr></thead><tbody>'+profs.map(p=>`<tr><td style="font-weight:500;">${p.nome}</td><td>${p.funcao||'—'}</td><td>${p.email||'—'}</td><td>${p.com?p.com+'%':'—'}</td><td style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;" onclick="editarProf(${p.id})">Editar</button><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;color:var(--danger);border-color:rgba(192,57,43,0.3);" onclick="excluirProf(${p.id})">Excluir</button></td></tr>`).join('')+'</tbody></table>';
+}
+
+function salvarProf(){
+  const nome=document.getElementById('pf-nome').value.trim();
+  if(!nome){toast('Nome é obrigatório','error');return;}
+  const id=document.getElementById('pf-id').value;
+  const profs=DB.get('profissionais');
+  const obj={id:id?parseInt(id):DB.nextId('profissionais'),nome,funcao:document.getElementById('pf-funcao').value,email:document.getElementById('pf-email').value,com:document.getElementById('pf-com').value};
+  if(id){const i=profs.findIndex(p=>p.id===parseInt(id));profs[i]=obj;}else{profs.push(obj);}
+  DB.set('profissionais',profs);
+  closeModal('modal-prof');
+  toast(id?'Profissional atualizado!':'Profissional cadastrado!');
+  renderProfs();
+}
+
+function editarProf(id){
+  const p=DB.get('profissionais').find(x=>x.id===id);
+  document.getElementById('prof-modal-title').textContent='Editar profissional';
+  document.getElementById('pf-id').value=p.id;
+  document.getElementById('pf-nome').value=p.nome;
+  document.getElementById('pf-funcao').value=p.funcao||'';
+  document.getElementById('pf-email').value=p.email||'';
+  document.getElementById('pf-com').value=p.com||'';
+  openModal('modal-prof');
+}
+
+function excluirProf(id){
+  openConfirm('Excluir este profissional?',()=>{
+    DB.set('profissionais',DB.get('profissionais').filter(p=>p.id!==id));
+    toast('Profissional excluído.','error');renderProfs();
   });
 }
+
+// PROCEDIMENTOS
+function renderProcs(){
+  const procs=DB.get('procedimentos');
+  const body=document.getElementById('proc-body');
+  if(!procs.length){body.innerHTML='<div class="empty-state"><div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="empty-title">Nenhum procedimento cadastrado</div><div class="empty-desc">Cadastre os procedimentos oferecidos pela sua clínica.</div></div>';return;}
+  body.innerHTML='<table><thead><tr><th>Procedimento</th><th>Valor padrão</th><th>Retorno em</th><th>Ações</th></tr></thead><tbody>'+procs.map(p=>`<tr><td style="font-weight:500;">${p.nome}</td><td>${p.valor?'R$'+parseFloat(p.valor).toFixed(2):'—'}</td><td>${p.retorno?p.retorno+' dias':'—'}</td><td style="display:flex;gap:6px;"><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;" onclick="editarProc(${p.id})">Editar</button><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;color:var(--danger);border-color:rgba(192,57,43,0.3);" onclick="excluirProc(${p.id})">Excluir</button></td></tr>`).join('')+'</tbody></table>';
+}
+
+function salvarProc(){
+  const nome=document.getElementById('pr-nome').value.trim();
+  if(!nome){toast('Nome é obrigatório','error');return;}
+  const id=document.getElementById('pr-id').value;
+  const procs=DB.get('procedimentos');
+  const obj={id:id?parseInt(id):DB.nextId('procedimentos'),nome,valor:document.getElementById('pr-valor').value,retorno:document.getElementById('pr-retorno').value,desc:document.getElementById('pr-desc').value};
+  if(id){const i=procs.findIndex(p=>p.id===parseInt(id));procs[i]=obj;}else{procs.push(obj);}
+  DB.set('procedimentos',procs);
+  closeModal('modal-proc');
+  toast(id?'Procedimento atualizado!':'Procedimento cadastrado!');
+  renderProcs();
+}
+
+function editarProc(id){
+  const p=DB.get('procedimentos').find(x=>x.id===id);
+  document.getElementById('proc-modal-title').textContent='Editar procedimento';
+  document.getElementById('pr-id').value=p.id;
+  document.getElementById('pr-nome').value=p.nome;
+  document.getElementById('pr-valor').value=p.valor||'';
+  document.getElementById('pr-retorno').value=p.retorno||'';
+  document.getElementById('pr-desc').value=p.desc||'';
+  openModal('modal-proc');
+}
+
+function excluirProc(id){
+  openConfirm('Excluir este procedimento?',()=>{
+    DB.set('procedimentos',DB.get('procedimentos').filter(p=>p.id!==id));
+    toast('Procedimento excluído.','error');renderProcs();
+  });
+}
+
+['modal-prof','modal-proc'].forEach(m=>{
+  document.getElementById(m).addEventListener('click',function(e){if(e.target===this)closeModal(m);});
+});
+
+carregarClinica();
 </script>
-</div>
-</div>
 </body>
 </html>

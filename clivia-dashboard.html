@@ -88,126 +88,170 @@ tr:hover td { background:var(--cream); }
 </aside>
 <div class="main">
   <header class="topbar">
-    <div><h1>Bom dia, Dra. Ana 👋</h1><p>Quinta-feira, 28 de maio de 2026</p></div>
-    <div class="topbar-right"><button class="btn btn-outline">Exportar relatório</button><button class="btn btn-primary">+ Novo agendamento</button></div>
+    <div><h1>Bem-vindo à Clivia 👋</h1><p>Comece configurando sua clínica</p></div>
+    <div class="topbar-right"><button class="btn btn-primary" onclick="window.location.href='clivia-configuracoes.html'">Configurar clínica</button></div>
   </header>
   <div class="content">
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
-  <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px 22px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <span style="font-size:12px;color:var(--text-muted);font-weight:500;">Agendamentos hoje</span>
-      <div style="width:32px;height:32px;border-radius:8px;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      </div>
-    </div>
-    <div style="font-family:'DM Serif Display',serif;font-size:32px;color:var(--text);line-height:1;margin-bottom:6px;">8</div>
-    <div style="font-size:12px;color:var(--success);">↑ 2 a mais que ontem</div>
-  </div>
-  <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px 22px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <span style="font-size:12px;color:var(--text-muted);font-weight:500;">Faturamento do mês</span>
-      <div style="width:32px;height:32px;border-radius:8px;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      </div>
-    </div>
-    <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--text);line-height:1;margin-bottom:6px;">R$8.420</div>
-    <div style="font-size:12px;color:var(--success);">↑ +12% vs mês anterior</div>
-  </div>
-  <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px 22px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <span style="font-size:12px;color:var(--text-muted);font-weight:500;">Pacientes ativos</span>
-      <div style="width:32px;height:32px;border-radius:8px;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-      </div>
-    </div>
-    <div style="font-family:'DM Serif Display',serif;font-size:32px;color:var(--text);line-height:1;margin-bottom:6px;">134</div>
-    <div style="font-size:12px;color:var(--success);">↑ 6 novos este mês</div>
-  </div>
-  <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px 22px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <span style="font-size:12px;color:var(--text-muted);font-weight:500;">Retornos pendentes</span>
-      <div style="width:32px;height:32px;border-radius:8px;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-      </div>
-    </div>
-    <div style="font-family:'DM Serif Display',serif;font-size:32px;color:var(--text);line-height:1;margin-bottom:6px;">3</div>
-    <div style="font-size:12px;color:var(--warning);">⚠ 1 em atraso</div>
-  </div>
-</div>
-
+<div id="metrics" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;"></div>
 <div style="display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:20px;">
   <div style="background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;">
     <div style="padding:18px 22px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">
       <span style="font-size:14px;font-weight:600;">Faturamento da semana</span>
-      <a href="clivia-financeiro.html" style="font-size:12px;color:var(--copper);text-decoration:none;">Ver relatório completo →</a>
+      <a href="clivia-financeiro.html" style="font-size:12px;color:var(--copper);text-decoration:none;">Ver relatório →</a>
     </div>
-    <div style="display:flex;align-items:flex-end;gap:8px;padding:16px 22px 8px;height:180px;">
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;"><div style="width:100%;background:var(--copper-pale);border-radius:4px 4px 0 0;height:45%;"></div><span style="font-size:10px;color:var(--text-muted);">Seg</span></div>
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;"><div style="width:100%;background:var(--copper-pale);border-radius:4px 4px 0 0;height:70%;"></div><span style="font-size:10px;color:var(--text-muted);">Ter</span></div>
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;"><div style="width:100%;background:var(--copper-dark);border-radius:4px 4px 0 0;height:90%;"></div><span style="font-size:10px;color:var(--text-muted);">Qua</span></div>
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;"><div style="width:100%;background:var(--copper-pale);border-radius:4px 4px 0 0;height:55%;"></div><span style="font-size:10px;color:var(--text-muted);">Qui</span></div>
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;"><div style="width:100%;background:var(--copper-pale);border-radius:4px 4px 0 0;height:80%;"></div><span style="font-size:10px;color:var(--text-muted);">Sex</span></div>
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;"><div style="width:100%;background:var(--copper-pale);border-radius:4px 4px 0 0;height:35%;"></div><span style="font-size:10px;color:var(--text-muted);">Sáb</span></div>
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;"><div style="width:100%;background:var(--copper-pale);border-radius:4px 4px 0 0;height:20%;"></div><span style="font-size:10px;color:var(--text-muted);">Dom</span></div>
-    </div>
-    <div style="padding:0 22px 16px;display:flex;gap:24px;">
-      <div><div style="font-size:11px;color:var(--text-muted);">Esta semana</div><div style="font-size:18px;font-weight:600;">R$ 3.840</div></div>
-      <div><div style="font-size:11px;color:var(--text-muted);">Semana anterior</div><div style="font-size:18px;font-weight:600;color:var(--text-muted);">R$ 3.210</div></div>
-      <div><div style="font-size:11px;color:var(--text-muted);">Variação</div><div style="font-size:18px;font-weight:600;color:var(--success);">+19,6%</div></div>
-    </div>
+    <div id="chart-area"></div>
   </div>
   <div style="background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;">
     <div style="padding:18px 22px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">
       <span style="font-size:14px;font-weight:600;">Agenda de hoje</span>
       <a href="clivia-agenda.html" style="font-size:12px;color:var(--copper);text-decoration:none;">Ver tudo →</a>
     </div>
-    <div style="padding:0 22px;">
-      <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);"><span style="font-size:12px;font-weight:600;color:var(--copper);min-width:44px;">08:30</span><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Maria Santos</div><div style="font-size:11px;color:var(--text-muted);">Botox facial</div></div><span style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:100px;background:var(--cream-dark);color:var(--text-muted);">Concluído</span></div>
-      <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);"><span style="font-size:12px;font-weight:600;color:var(--copper);min-width:44px;">10:00</span><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Ana Costa</div><div style="font-size:11px;color:var(--text-muted);">Preenchimento labial</div></div><span style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:100px;background:rgba(45,106,79,0.1);color:var(--success);">Confirmado</span></div>
-      <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);"><span style="font-size:12px;font-weight:600;color:var(--copper);min-width:44px;">11:30</span><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Juliana Lima</div><div style="font-size:11px;color:var(--text-muted);">Limpeza de pele</div></div><span style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:100px;background:rgba(45,106,79,0.1);color:var(--success);">Confirmado</span></div>
-      <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);"><span style="font-size:12px;font-weight:600;color:var(--copper);min-width:44px;">14:00</span><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Fernanda Reis</div><div style="font-size:11px;color:var(--text-muted);">Laser CO2</div></div><span style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:100px;background:rgba(183,121,31,0.1);color:var(--warning);">Pendente</span></div>
-      <div style="display:flex;align-items:center;gap:14px;padding:12px 0;"><span style="font-size:12px;font-weight:600;color:var(--copper);min-width:44px;">15:30</span><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Carla Mendes</div><div style="font-size:11px;color:var(--text-muted);">Fio de PDO</div></div><span style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:100px;background:rgba(45,106,79,0.1);color:var(--success);">Confirmado</span></div>
-    </div>
+    <div id="agenda-hoje" style="padding:0 22px;"></div>
   </div>
 </div>
-
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
   <div style="background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;">
-    <div style="padding:18px 22px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">
+    <div style="padding:18px 22px 14px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);">
       <span style="font-size:14px;font-weight:600;">Lista de reativação</span>
-      <a href="clivia-reativacao.html" style="font-size:12px;color:var(--copper);text-decoration:none;">Ver todos (5) →</a>
+      <a href="clivia-reativacao.html" style="font-size:12px;color:var(--copper);text-decoration:none;">Ver todos →</a>
     </div>
-    <div style="padding:0 22px;">
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);"><div style="width:34px;height:34px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--copper);flex-shrink:0;">PS</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Paula Silva</div><div style="font-size:11px;color:var(--text-muted);">Sem visita há 68 dias · Botox</div></div><button onclick="marcarContatado(this)" style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--border);background:transparent;color:var(--copper-dark);cursor:pointer;">Marcar contatado</button></div>
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);"><div style="width:34px;height:34px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--copper);flex-shrink:0;">RO</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Roberto Oliveira</div><div style="font-size:11px;color:var(--text-muted);">Sem visita há 55 dias · Laser</div></div><button onclick="marcarContatado(this)" style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--border);background:transparent;color:var(--copper-dark);cursor:pointer;">Marcar contatado</button></div>
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);"><div style="width:34px;height:34px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--copper);flex-shrink:0;">BM</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Beatriz Moura</div><div style="font-size:11px;color:var(--text-muted);">Sem visita há 47 dias · Peeling</div></div><button onclick="marcarContatado(this)" style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--border);background:transparent;color:var(--copper-dark);cursor:pointer;">Marcar contatado</button></div>
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;"><div style="width:34px;height:34px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--copper);flex-shrink:0;">TC</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Tâmara Castro</div><div style="font-size:11px;color:var(--text-muted);">Sem visita há 39 dias · Limpeza</div></div><button onclick="marcarContatado(this)" style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--border);background:transparent;color:var(--copper-dark);cursor:pointer;">Marcar contatado</button></div>
-    </div>
+    <div id="reativacao-lista" style="padding:0 22px;"></div>
   </div>
   <div style="background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;">
-    <div style="padding:18px 22px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">
+    <div style="padding:18px 22px 14px;display:flex;justify-content:space-between;border-bottom:1px solid var(--border);">
       <span style="font-size:14px;font-weight:600;">Retornos pós-procedimento</span>
-      <a href="clivia-retornos.html" style="font-size:12px;color:var(--copper);text-decoration:none;">Ver todos (3) →</a>
+      <a href="clivia-retornos.html" style="font-size:12px;color:var(--copper);text-decoration:none;">Ver todos →</a>
     </div>
-    <div style="padding:0 22px;">
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);"><div style="width:34px;height:34px;border-radius:50%;background:rgba(192,57,43,0.1);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--danger);flex-shrink:0;">MC</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Maria Costa</div><div style="font-size:11px;color:var(--text-muted);">Botox · Atrasado 3 dias</div></div><span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;background:rgba(192,57,43,0.1);color:var(--danger);">Atrasado</span></div>
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);"><div style="width:34px;height:34px;border-radius:50%;background:rgba(183,121,31,0.1);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--warning);flex-shrink:0;">LF</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Lara Ferreira</div><div style="font-size:11px;color:var(--text-muted);">Preenchimento · Hoje</div></div><span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;background:rgba(183,121,31,0.1);color:var(--warning);">Hoje</span></div>
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;"><div style="width:34px;height:34px;border-radius:50%;background:rgba(45,106,79,0.1);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--success);flex-shrink:0;">KS</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;">Kátia Souza</div><div style="font-size:11px;color:var(--text-muted);">Laser · Em 3 dias</div></div><span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;background:rgba(45,106,79,0.1);color:var(--success);">Em 3 dias</span></div>
-    </div>
+    <div id="retornos-lista" style="padding:0 22px;"></div>
   </div>
 </div>
+</div>
+</div>
+<style>
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:32px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:modalIn 0.2s ease; }
+.modal.modal-lg { max-width:600px; }
+@keyframes modalIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; margin-bottom:6px; }
+.modal p { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:12px; font-weight:500; margin-bottom:5px; color:var(--text); }
+.form-control { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; background:#fff; transition:border-color 0.2s; }
+.form-control:focus { border-color:var(--copper); box-shadow:0 0 0 3px rgba(122,102,85,0.1); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:10px; margin-top:24px; }
+.modal-actions .btn { flex:1; padding:11px; justify-content:center; }
+.empty-state { padding:56px 22px; text-align:center; }
+.empty-icon { width:56px; height:56px; background:var(--copper-pale); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.empty-title { font-size:15px; font-weight:500; margin-bottom:6px; }
+.empty-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-dialog { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center; }
+.confirm-dialog.open { display:flex; }
+.confirm-box { background:#fff; border-radius:16px; padding:28px; max-width:360px; width:90%; text-align:center; }
+.confirm-box h3 { font-size:17px; font-weight:600; margin-bottom:8px; }
+.confirm-box p { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-btns { display:flex; gap:10px; }
+.confirm-btns .btn { flex:1; }
+.badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:100px;}.badge-success{background:rgba(45,106,79,0.1);color:var(--success)}.badge-warning{background:rgba(183,121,31,0.1);color:var(--warning)}.badge-danger{background:rgba(192,57,43,0.1);color:var(--danger)}.badge-neutral{background:var(--cream-dark);color:var(--text-muted)}</style><script>
+// ── SHARED DATA LAYER ──
+const DB = {
+  get: k => JSON.parse(localStorage.getItem('clivia_'+k)||'[]'),
+  set: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  getObj: (k,d={}) => JSON.parse(localStorage.getItem('clivia_'+k)||JSON.stringify(d)),
+  setObj: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  nextId: k => { const d=DB.get(k); return d.length ? Math.max(...d.map(x=>x.id||0))+1 : 1; }
+};
 
-<script>
-function marcarContatado(btn){
-  btn.textContent='✓ Contatado';
-  btn.style.background='rgba(45,106,79,0.1)';
-  btn.style.color='var(--success)';
-  btn.style.borderColor='rgba(45,106,79,0.2)';
-  btn.disabled=true;
-  btn.closest('div[style*="display:flex"]').style.opacity='0.5';
+// Modal helpers
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openConfirm(msg, onYes){
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-yes').onclick = function(){ closeConfirm(); onYes(); };
 }
+function closeConfirm(){ document.getElementById('confirm-dialog').classList.remove('open'); }
+
+// Toast notification
+function toast(msg, type='success'){
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;background:'+(type==='success'?'#2D6A4F':type==='error'?'#C0392B':'#2E2218')+';box-shadow:0 4px 20px rgba(0,0,0,0.15);animation:fadeUp 0.3s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+function render(){
+  const hoje=new Date();
+  const hojeStr=hoje.toISOString().split('T')[0];
+  const ags=DB.get('agendamentos');
+  const agHoje=ags.filter(a=>a.data===hojeStr);
+  const pacientes=DB.get('pacientes');
+  const fins=DB.get('financeiro');
+  const mesStr=hoje.toISOString().slice(0,7);
+  const fatMes=fins.filter(f=>f.tipo==='Receita'&&f.data&&f.data.startsWith(mesStr)).reduce((s,f)=>s+parseFloat(f.valor||0),0);
+  const retornos=DB.get('retornos').filter(r=>r.status==='Pendente');
+  const atrasados=retornos.filter(r=>new Date(r.dataRetorno+'T12:00:00')<hoje).length;
+
+  // Metrics
+  document.getElementById('metrics').innerHTML=`
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px 22px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;"><span style="font-size:12px;color:var(--text-muted);font-weight:500;">Agendamentos hoje</span><div style="width:32px;height:32px;border-radius:8px;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div>
+      <div style="font-family:'DM Serif Display',serif;font-size:32px;color:var(--text);line-height:1;margin-bottom:6px;">${agHoje.length}</div>
+      <div style="font-size:12px;color:var(--text-muted);">${agHoje.length===0?'Nenhum agendamento':agHoje.length+' no calendário'}</div>
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px 22px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;"><span style="font-size:12px;color:var(--text-muted);font-weight:500;">Faturamento do mês</span><div style="width:32px;height:32px;border-radius:8px;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
+      <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--text);line-height:1;margin-bottom:6px;">R$${fatMes.toFixed(2).replace('.',',')}</div>
+      <div style="font-size:12px;color:var(--text-muted);">${fatMes===0?'Nenhum lançamento ainda':'Receitas do mês'}</div>
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px 22px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;"><span style="font-size:12px;color:var(--text-muted);font-weight:500;">Pacientes ativos</span><div style="width:32px;height:32px;border-radius:8px;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
+      <div style="font-family:'DM Serif Display',serif;font-size:32px;color:var(--text);line-height:1;margin-bottom:6px;">${pacientes.length}</div>
+      <div style="font-size:12px;color:var(--text-muted);">${pacientes.length===0?'Nenhum paciente':pacientes.length+' cadastrado'+(pacientes.length!==1?'s':'')}</div>
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px 22px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;"><span style="font-size:12px;color:var(--text-muted);font-weight:500;">Retornos pendentes</span><div style="width:32px;height:32px;border-radius:8px;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div></div>
+      <div style="font-family:'DM Serif Display',serif;font-size:32px;color:${retornos.length>0?'var(--warning)':'var(--text)'};line-height:1;margin-bottom:6px;">${retornos.length}</div>
+      <div style="font-size:12px;color:${atrasados>0?'var(--danger)':'var(--text-muted)'};">${atrasados>0?atrasados+' em atraso':'Nenhum em atraso'}</div>
+    </div>
+  `;
+
+  // Chart
+  const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const semana=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);semana.push({str:d.toISOString().split('T')[0],dia:dias[d.getDay()]});}
+  const maxVal=Math.max(...semana.map(s=>fins.filter(f=>f.tipo==='Receita'&&f.data===s.str).reduce((a,f)=>a+parseFloat(f.valor||0),0)),1);
+  document.getElementById('chart-area').innerHTML=`<div style="display:flex;align-items:flex-end;gap:8px;padding:16px 22px 8px;height:160px;">${semana.map(s=>{const v=fins.filter(f=>f.tipo==='Receita'&&f.data===s.str).reduce((a,f)=>a+parseFloat(f.valor||0),0);const pct=Math.max((v/maxVal)*100,4);const isHoje=s.str===hojeStr;return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;"><div style="width:100%;background:${isHoje?'var(--copper-dark)':'var(--copper-pale)'};border-radius:4px 4px 0 0;height:${pct}%;transition:height 0.3s;"></div><span style="font-size:10px;color:var(--text-muted);">${s.dia}</span></div>`;}).join('')}</div>`;
+
+  // Agenda hoje
+  const agEl=document.getElementById('agenda-hoje');
+  if(!agHoje.length){agEl.innerHTML='<div style="padding:40px 0;text-align:center;"><div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Sem agendamentos hoje</div><a href="clivia-agenda.html" style="display:inline-block;padding:8px 16px;border-radius:8px;background:var(--copper-dark);color:#fff;font-size:12px;text-decoration:none;">+ Novo agendamento</a></div>';return;}
+  const statusClass={Confirmado:'badge-success',Pendente:'badge-warning',Concluído:'badge-neutral',Cancelado:'badge-danger'};
+  agEl.innerHTML=agHoje.slice(0,5).map(a=>`<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);"><span style="font-size:12px;font-weight:600;color:var(--copper);min-width:44px;">${a.hora||'—'}</span><div style="flex:1;"><div style="font-size:13px;font-weight:500;">${a.pacienteNome}</div><div style="font-size:11px;color:var(--text-muted);">${a.proc||'—'}</div></div><span class="badge ${statusClass[a.status]||'badge-neutral'}">${a.status}</span></div>`).join('');
+
+  // Reativação
+  const reatEl=document.getElementById('reativacao-lista');
+  const reatLista=[];
+  pacientes.forEach(p=>{const evols=DB.get('evolucoes_'+p.id);if(!evols.length)return;const u=evols.reduce((a,b)=>a.data>b.data?a:b);const dias=Math.floor((hoje-new Date(u.data+'T12:00:00'))/86400000);if(dias>=30)reatLista.push({...p,dias,proc:u.proc});});
+  reatLista.sort((a,b)=>b.dias-a.dias);
+  if(!reatLista.length){reatEl.innerHTML='<div style="padding:40px 0;text-align:center;font-size:13px;color:var(--text-muted);">Nenhum paciente inativo</div>';}
+  else{reatEl.innerHTML=reatLista.slice(0,4).map(p=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);"><div style="width:34px;height:34px;border-radius:50%;background:var(--copper-pale);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--copper);flex-shrink:0;">${p.nome.charAt(0)}</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;">${p.nome}</div><div style="font-size:11px;color:var(--text-muted);">Há ${p.dias} dias · ${p.proc||'—'}</div></div></div>`).join('');}
+
+  // Retornos
+  const retEl=document.getElementById('retornos-lista');
+  const retPend=DB.get('retornos').filter(r=>r.status==='Pendente').sort((a,b)=>a.dataRetorno>b.dataRetorno?1:-1);
+  if(!retPend.length){retEl.innerHTML='<div style="padding:40px 0;text-align:center;font-size:13px;color:var(--text-muted);">Nenhum retorno pendente</div>';}
+  else{
+    const badgeCls=r=>{const d=Math.floor((new Date(r.dataRetorno+'T12:00:00')-hoje)/86400000);return d<0?'badge-danger':d===0?'badge-warning':'badge-success';};
+    const badgeTxt=r=>{const d=Math.floor((new Date(r.dataRetorno+'T12:00:00')-hoje)/86400000);return d<0?'Atrasado':d===0?'Hoje':'Em '+d+' dia'+(d!==1?'s':'');};
+    retEl.innerHTML=retPend.slice(0,4).map(r=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);"><div style="flex:1;"><div style="font-size:13px;font-weight:500;">${r.pacienteNome}</div><div style="font-size:11px;color:var(--text-muted);">${r.proc}</div></div><span class="badge ${badgeCls(r)}">${badgeTxt(r)}</span></div>`).join('');
+  }
+}
+
+render();
 </script>
-</div>
-</div>
 </body>
 </html>

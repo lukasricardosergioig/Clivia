@@ -89,35 +89,239 @@ tr:hover td { background:var(--cream); }
 <div class="main">
   <header class="topbar">
     <div><h1>Estoque</h1><p>Controle de insumos e materiais</p></div>
-    <div class="topbar-right"><button class="btn btn-primary">+ Novo item</button></div>
+    <div class="topbar-right"><button class="btn btn-primary" onclick="abrirItem()">+ Novo item</button></div>
   </header>
   <div class="content">
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Total de itens</div><div style="font-family:'DM Serif Display',serif;font-size:28px;">24</div></div></div>
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Itens em alerta</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--warning);">3</div></div></div>
-  <div class="card" style="margin-bottom:0;"><div style="padding:18px 22px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Valor em estoque</div><div style="font-family:'DM Serif Display',serif;font-size:28px;">R$4.820</div></div></div>
+<div id="metrics" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;"></div>
+<div style="display:flex;gap:10px;margin-bottom:16px;">
+  <input class="form-control" id="search" placeholder="Buscar produto..." oninput="render()" style="max-width:280px;">
+  <select class="form-control" id="filtro-status" style="max-width:160px;" onchange="render()"><option value="">Todos</option><option value="OK">OK</option><option value="Baixo">Baixo</option><option value="Crítico">Crítico</option></select>
+  <div style="flex:1;"></div>
+  <button class="btn btn-primary" onclick="abrirItem()">+ Novo item</button>
 </div>
 <div class="card">
-  <div class="card-header">
-    <span class="card-title">Itens em estoque</span>
-    <button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Novo item</button>
+  <div class="card-header"><span class="card-title">Itens em estoque</span><span id="count" style="font-size:13px;color:var(--text-muted);"></span></div>
+  <div id="table-body"></div>
+</div>
+
+<div class="modal-overlay" id="modal-item">
+  <div class="modal">
+    <h2 id="modal-title">Novo item</h2>
+    <p>Cadastre um produto no estoque</p>
+    <input type="hidden" id="i-id">
+    <div class="form-group"><label class="form-label">Nome do produto *</label><input class="form-control" id="i-nome" placeholder="Ex: Toxina Botulínica 100u"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Categoria</label><input class="form-control" id="i-cat" placeholder="Ex: Injetáveis"></div>
+      <div class="form-group"><label class="form-label">Unidade</label><input class="form-control" id="i-unid" placeholder="Ex: unidades, frascos, caixas"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Quantidade atual *</label><input class="form-control" id="i-qtd" type="number" min="0" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Quantidade mínima</label><input class="form-control" id="i-min" type="number" min="0" placeholder="0"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Valor unitário (R$)</label><input class="form-control" id="i-valor" type="number" step="0.01" placeholder="0,00"></div>
+      <div class="form-group"><label class="form-label">Fornecedor</label><input class="form-control" id="i-forn" placeholder="Nome do fornecedor"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-item')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarItem()">Salvar</button>
+    </div>
   </div>
-  <div style="padding:0;">
-    <table>
-      <thead><tr><th>Produto</th><th>Categoria</th><th>Quantidade</th><th>Mínimo</th><th>Valor unit.</th><th>Status</th><th>Ações</th></tr></thead>
-      <tbody>
-        <tr><td><div style="font-weight:500;">Toxina Botulínica 100u</div></td><td>Injetáveis</td><td>8 unidades</td><td>5</td><td>R$ 280,00</td><td><span class="badge badge-success">OK</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-        <tr><td><div style="font-weight:500;">Ácido Hialurônico 1ml</div></td><td>Injetáveis</td><td>4 unidades</td><td>5</td><td>R$ 180,00</td><td><span class="badge badge-warning">Baixo</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-        <tr><td><div style="font-weight:500;">Lidocaína 2% 20ml</div></td><td>Anestésicos</td><td>15 frascos</td><td>10</td><td>R$ 12,00</td><td><span class="badge badge-success">OK</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-        <tr><td><div style="font-weight:500;">Peeling de TCA 30%</div></td><td>Peelings</td><td>2 frascos</td><td>3</td><td>R$ 95,00</td><td><span class="badge badge-danger">Crítico</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-        <tr><td><div style="font-weight:500;">Fio de PDO 19G</div></td><td>Fios</td><td>30 unidades</td><td>20</td><td>R$ 8,50</td><td><span class="badge badge-success">OK</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-        <tr><td><div style="font-weight:500;">Curativo estéril 10x10</div></td><td>Materiais</td><td>3 caixas</td><td>5</td><td>R$ 22,00</td><td><span class="badge badge-warning">Baixo</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-        <tr><td><div style="font-weight:500;">Seringa 1ml</div></td><td>Materiais</td><td>80 unidades</td><td>50</td><td>R$ 0,85</td><td><span class="badge badge-success">OK</span></td><td><button class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Editar</button></td></tr>
-      </tbody>
-    </table>
+</div>
+
+<!-- Modal ajuste de quantidade -->
+<div class="modal-overlay" id="modal-ajuste">
+  <div class="modal" style="max-width:360px;">
+    <h2>Ajustar quantidade</h2>
+    <p id="ajuste-nome-label">Produto</p>
+    <input type="hidden" id="aj-id">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Operação</label>
+        <select class="form-control" id="aj-op"><option value="add">Adicionar (+)</option><option value="sub">Remover (-)</option><option value="set">Definir valor</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Quantidade</label><input class="form-control" id="aj-qtd" type="number" min="0" placeholder="0"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-ajuste')">Cancelar</button>
+      <button class="btn btn-primary" onclick="aplicarAjuste()">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<div class="confirm-dialog" id="confirm-dialog">
+  <div class="confirm-box">
+    <h3>Confirmar exclusão</h3>
+    <p id="confirm-msg">Tem certeza que deseja excluir?</p>
+    <div class="confirm-btns">
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-primary" id="confirm-yes" style="background:var(--danger);">Excluir</button>
+    </div>
   </div>
 </div>
 </div>
 </div>
+<style>
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:32px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:modalIn 0.2s ease; }
+.modal.modal-lg { max-width:600px; }
+@keyframes modalIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; margin-bottom:6px; }
+.modal p { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:12px; font-weight:500; margin-bottom:5px; color:var(--text); }
+.form-control { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; background:#fff; transition:border-color 0.2s; }
+.form-control:focus { border-color:var(--copper); box-shadow:0 0 0 3px rgba(122,102,85,0.1); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-actions { display:flex; gap:10px; margin-top:24px; }
+.modal-actions .btn { flex:1; padding:11px; justify-content:center; }
+.empty-state { padding:56px 22px; text-align:center; }
+.empty-icon { width:56px; height:56px; background:var(--copper-pale); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+.empty-title { font-size:15px; font-weight:500; margin-bottom:6px; }
+.empty-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-dialog { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:2000; align-items:center; justify-content:center; }
+.confirm-dialog.open { display:flex; }
+.confirm-box { background:#fff; border-radius:16px; padding:28px; max-width:360px; width:90%; text-align:center; }
+.confirm-box h3 { font-size:17px; font-weight:600; margin-bottom:8px; }
+.confirm-box p { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.confirm-btns { display:flex; gap:10px; }
+.confirm-btns .btn { flex:1; }
+</style><script>
+// ── SHARED DATA LAYER ──
+const DB = {
+  get: k => JSON.parse(localStorage.getItem('clivia_'+k)||'[]'),
+  set: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  getObj: (k,d={}) => JSON.parse(localStorage.getItem('clivia_'+k)||JSON.stringify(d)),
+  setObj: (k,v) => localStorage.setItem('clivia_'+k, JSON.stringify(v)),
+  nextId: k => { const d=DB.get(k); return d.length ? Math.max(...d.map(x=>x.id||0))+1 : 1; }
+};
+
+// Modal helpers
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openConfirm(msg, onYes){
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-yes').onclick = function(){ closeConfirm(); onYes(); };
+}
+function closeConfirm(){ document.getElementById('confirm-dialog').classList.remove('open'); }
+
+// Toast notification
+function toast(msg, type='success'){
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;background:'+(type==='success'?'#2D6A4F':type==='error'?'#C0392B':'#2E2218')+';box-shadow:0 4px 20px rgba(0,0,0,0.15);animation:fadeUp 0.3s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+function statusEstoque(qtd,min){
+  if(qtd<=0) return 'Crítico';
+  if(min>0 && qtd<=min) return 'Crítico';
+  if(min>0 && qtd<=min*2) return 'Baixo';
+  return 'OK';
+}
+
+function renderMetrics(){
+  const items=DB.get('estoque');
+  const total=items.length;
+  const alerta=items.filter(i=>statusEstoque(i.qtd,i.min)==='Baixo').length;
+  const critico=items.filter(i=>statusEstoque(i.qtd,i.min)==='Crítico').length;
+  const valor=items.reduce((s,i)=>s+(parseFloat(i.valor||0)*parseInt(i.qtd||0)),0);
+  document.getElementById('metrics').innerHTML=`
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Total de itens</div><div style="font-family:'DM Serif Display',serif;font-size:28px;">${total}</div></div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Alertas (baixo/crítico)</div><div style="font-family:'DM Serif Display',serif;font-size:28px;color:${(alerta+critico)>0?'var(--warning)':'var(--success)'};">${alerta+critico}</div></div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:20px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Valor em estoque</div><div style="font-family:'DM Serif Display',serif;font-size:24px;">R$${valor.toFixed(2).replace('.',',')}</div></div>
+  `;
+}
+
+function render(){
+  renderMetrics();
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const sf=document.getElementById('filtro-status').value;
+  let items=DB.get('estoque').filter(i=>{
+    const s=statusEstoque(i.qtd,i.min);
+    return i.nome.toLowerCase().includes(q) && (!sf||s===sf);
+  });
+  document.getElementById('count').textContent=items.length+' item'+(items.length!==1?'s':'');
+  const body=document.getElementById('table-body');
+  if(!items.length){ body.innerHTML='<div class="empty-state"><div class="empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--copper)" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div class="empty-title">Nenhum item cadastrado</div><div class="empty-desc">Cadastre seus insumos para controlar o estoque.</div><button class="btn btn-primary" onclick="abrirItem()">+ Novo item</button></div>'; return; }
+  const cls={OK:'badge-success',Baixo:'badge-warning',Crítico:'badge-danger'};
+  body.innerHTML='<table><thead><tr><th>Produto</th><th>Categoria</th><th>Quantidade</th><th>Mínimo</th><th>Valor unit.</th><th>Status</th><th>Ações</th></tr></thead><tbody>'+items.map(i=>{
+    const s=statusEstoque(i.qtd,i.min);
+    return `<tr><td style="font-weight:500;">${i.nome}</td><td>${i.cat||'—'}</td><td>${i.qtd} ${i.unid||''}</td><td>${i.min||'—'}</td><td>${i.valor?'R$'+parseFloat(i.valor).toFixed(2):'—'}</td><td><span class="badge ${cls[s]}">${s}</span></td><td style="display:flex;gap:4px;"><button class="btn btn-outline" style="padding:5px 8px;font-size:11px;" onclick="abrirAjuste(${i.id})">± Qtd</button><button class="btn btn-outline" style="padding:5px 8px;font-size:11px;" onclick="editarItem(${i.id})">Editar</button><button class="btn btn-outline" style="padding:5px 8px;font-size:11px;color:var(--danger);border-color:rgba(192,57,43,0.3);" onclick="excluirItem(${i.id})">Excluir</button></td></tr>`;
+  }).join('')+'</tbody></table>';
+}
+
+function abrirItem(){ limparItem(); openModal('modal-item'); }
+
+function salvarItem(){
+  const nome=document.getElementById('i-nome').value.trim();
+  const qtd=document.getElementById('i-qtd').value;
+  if(!nome||qtd===''){toast('Preencha nome e quantidade','error');return;}
+  const id=document.getElementById('i-id').value;
+  const items=DB.get('estoque');
+  const obj={id:id?parseInt(id):DB.nextId('estoque'),nome,cat:document.getElementById('i-cat').value,unid:document.getElementById('i-unid').value,qtd:parseInt(qtd),min:parseInt(document.getElementById('i-min').value||0),valor:parseFloat(document.getElementById('i-valor').value||0),forn:document.getElementById('i-forn').value};
+  if(id){const i=items.findIndex(x=>x.id===parseInt(id));items[i]=obj;}else{items.push(obj);}
+  DB.set('estoque',items);
+  closeModal('modal-item');
+  toast(id?'Item atualizado!':'Item cadastrado!');
+  render();
+}
+
+function editarItem(id){
+  const i=DB.get('estoque').find(x=>x.id===id);
+  document.getElementById('modal-title').textContent='Editar item';
+  document.getElementById('i-id').value=i.id;
+  document.getElementById('i-nome').value=i.nome;
+  document.getElementById('i-cat').value=i.cat||'';
+  document.getElementById('i-unid').value=i.unid||'';
+  document.getElementById('i-qtd').value=i.qtd;
+  document.getElementById('i-min').value=i.min||0;
+  document.getElementById('i-valor').value=i.valor||0;
+  document.getElementById('i-forn').value=i.forn||'';
+  openModal('modal-item');
+}
+
+function abrirAjuste(id){
+  const i=DB.get('estoque').find(x=>x.id===id);
+  document.getElementById('aj-id').value=id;
+  document.getElementById('ajuste-nome-label').textContent=i.nome+' — Qtd atual: '+i.qtd;
+  document.getElementById('aj-qtd').value='';
+  openModal('modal-ajuste');
+}
+
+function aplicarAjuste(){
+  const id=parseInt(document.getElementById('aj-id').value);
+  const op=document.getElementById('aj-op').value;
+  const v=parseInt(document.getElementById('aj-qtd').value||0);
+  const items=DB.get('estoque');
+  const idx=items.findIndex(x=>x.id===id);
+  if(op==='add') items[idx].qtd+=v;
+  else if(op==='sub') items[idx].qtd=Math.max(0,items[idx].qtd-v);
+  else items[idx].qtd=v;
+  DB.set('estoque',items);
+  closeModal('modal-ajuste');
+  toast('Quantidade atualizada!');
+  render();
+}
+
+function excluirItem(id){
+  openConfirm('Excluir este item do estoque?',()=>{
+    DB.set('estoque',DB.get('estoque').filter(x=>x.id!==id));
+    toast('Item excluído.','error');render();
+  });
+}
+
+function limparItem(){
+  ['i-id','i-nome','i-cat','i-unid','i-qtd','i-min','i-valor','i-forn'].forEach(x=>document.getElementById(x).value='');
+  document.getElementById('modal-title').textContent='Novo item';
+}
+
+document.getElementById('modal-item').addEventListener('click',function(e){if(e.target===this)closeModal('modal-item');});
+document.getElementById('modal-ajuste').addEventListener('click',function(e){if(e.target===this)closeModal('modal-ajuste');});
+render();
+</script>
 </body>
 </html>
